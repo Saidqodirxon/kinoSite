@@ -1,0 +1,73 @@
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/fonts/SFPRODISPLAYREGULAR.otf") format("opentype");
+}
+
+$light-mode-color: rgba(0, 0, 0, 0.4);
+$dark-mode-color: white;
+
+.navbar {
+  background-color: white;
+  color: $light-mode-color;
+  &.dark {
+    background-color: $light-mode-color;
+    color: $dark-mode-color;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  .brand {
+    font-weight: bold;
+    font-size: 1.25rem;
+    img {
+      max-height: 40px;
+    }
+  }
+  .menu-item,
+  .mobile-menu-item {
+    color: inherit;
+    &:hover {
+      color: $dark-mode-color;
+    }
+  }
+  .mode-toggle,
+  .toggle-button {
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+    &:focus {
+      outline: none;
+    }
+  }
+  .mobile-menu {
+    padding: 0.5rem 1rem;
+    background-color: rgba(255, 255, 255, 0.9);
+    &.dark {
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+  }
+  .search-input,
+  .search-input-mobile {
+    padding: 0.5rem;
+    border: 1px solid $light-mode-color;
+    border-radius: 0.25rem;
+    &:focus {
+      outline: none;
+      border-color: $dark-mode-color;
+    }
+  }
+  .dropdown-content {
+    background-color: white;
+    color: black;
+    width: 200px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    .dark & {
+      background-color: black;
+      color: white;
+    }
+  }
+}
