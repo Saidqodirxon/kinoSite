@@ -1,8 +1,13 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
-import { FaMoon, FaSun, FaBars, FaTimes } from "react-icons/fa";
+import React, { useState, useEffect, useRef } from "react";
+import { FaMoon, FaSun, FaBars, FaTimes, FaAngleDown } from "react-icons/fa";
 import "./index.scss";
 import { Link } from "react-router-dom";
+import { CiSearch } from "react-icons/ci";
+import logoDark from "/logo_dark_mode.png";
+import logoLight from "/logo_light_mode.png";
+import { FaCircle } from "react-icons/fa";
 
 const genres = [
   "Action",
@@ -11,7 +16,6 @@ const genres = [
   "Biography",
   "Comedy",
   "Crime",
-  "Documentary",
   "Drama",
   "Family",
   "Fantasy",
@@ -28,65 +32,76 @@ const genres = [
   "Soap",
   "Talk",
   "Thriller",
+  "War & Politics",
   "TV Movie",
   "War",
-  "War & Politics",
+  "Documentary",
   "Western",
 ];
 
-const Navbar = () => {
+const Navbar = ({ darkMode, toggleDarkMode }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(() => {
-    const savedMode = localStorage.getItem("darkMode");
-    return savedMode ? JSON.parse(savedMode) : false;
-  });
-
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
-  }, [darkMode]);
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
 
   return (
     <nav className={`navbar ${darkMode ? "dark" : ""}`}>
       <div className="container">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-24 ">
           <div className="flex items-center">
             <Link to="/" className="brand">
-              <img src="/logo.png" alt="Brand Logo" />
+              <img src={darkMode ? logoDark : logoLight} alt="Brand Logo" />
             </Link>
           </div>
           <div className="menu hidden md:flex">
-            <div className="ml-10 flex items-baseline space-x-4">
+            <div className="ml-10 flex items-baseline space-x-4 menu-item-box">
               <Link to="/" className="menu-item">
                 Bosh sahifa
               </Link>
-              <Link to="#" className="menu-item">
+              <Link to="/movies" className="menu-item">
                 Kinolar
               </Link>
               <Link to="#" className="menu-item">
                 Seriallar
               </Link>
-              <div className="relative">
+              <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="menu-item"
+                  className="menu-item flex items-center"
                 >
-                  Janri
+                  Janri <FaAngleDown className="ml-1" />
                 </button>
                 {isDropdownOpen && (
-                  <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-20">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2">
+                  <div
+                    className={`absolute left-0 mt-2 w-64 rounded-md shadow-lg z-20 md:w-[400px] ${
+                      darkMode
+                        ? "bg-[rgba(0,0,0,0.2)]"
+                        : "bg-[rgba(255,255,255,0.5)]"
+                    }`}
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-2">
                       {genres.map((genre) => (
                         <Link
                           key={genre}
                           to={`/genre/${genre.toLowerCase()}`}
-                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          className={`block px-1 py-1 hover:border-b-2 hover:border-red-700 hover:font-bold ${
+                            darkMode
+                              ? "text-[rgba(255,255,255,0.5)]"
+                              : "text-black"
+                          }`}
                           onClick={() => setIsDropdownOpen(false)}
                         >
                           {genre}
@@ -102,19 +117,18 @@ const Navbar = () => {
               <Link to="#" className="menu-item">
                 Yili
               </Link>
-              <input
-                type="text"
-                placeholder="Search..."
-                className="search-input"
-              />
+              <div className="flex search-box">
+                <input type="text" placeholder="Qidiruv" className="" />
+                <CiSearch className="" />
+              </div>
             </div>
           </div>
           <div className="flex items-center">
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="mode-toggle"
-            >
+            {/* <button onClick={toggleDarkMode} className="mode-toggle">
               {darkMode ? <FaSun /> : <FaMoon />}
+            </button> */}
+            <button onClick={toggleDarkMode} className="mode-toggle">
+              {darkMode ? <FaCircle /> : <FaCircle />}
             </button>
             <div className="menu-toggle md:hidden">
               <button
@@ -133,22 +147,22 @@ const Navbar = () => {
             <Link to="/" className="mobile-menu-item">
               Bosh sahifa
             </Link>
-            <Link to="#" className="mobile-menu-item">
+            <Link to="/movies" className="mobile-menu-item">
               Kinolar
             </Link>
             <Link to="#" className="mobile-menu-item">
               Seriallar
             </Link>
-            <div className="relative">
+            <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="mobile-menu-item"
+                className="mobile-menu-item flex items-center"
               >
-                Janri
+                Janri <FaAngleDown className="ml-1" />
               </button>
               {isDropdownOpen && (
                 <div className="absolute left-0 mt-2 w-full bg-white dark:bg-gray-800 rounded-md shadow-lg z-20">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 p-2">
                     {genres.map((genre) => (
                       <Link
                         key={genre}
