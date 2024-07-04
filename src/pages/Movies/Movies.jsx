@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet";
 import CommentsSection from "../../components/Comments/Comments";
 import SimilarMovies from "../../components/SimilarMovies/SimilarMovies";
 import Navbar from "../../components/Navbar/Navbar";
@@ -71,6 +72,31 @@ const MoviePage = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{data.movie.title} - Ajoyib Film va Seriyalar</title>
+        <meta name="description" content={data.movie.description} />
+        <meta
+          name="keywords"
+          content={`${data.movie.title}, Film, {data.movie.genre}, {data.movie.director}, {data.movie.actors}, {data.movie.year}, Aksiya, Triller`}
+        />
+        <meta
+          property="og:title"
+          content={`${data.movie.title} - Ajoyib Film va Seriyalar`}
+        />
+        <meta property="og:description" content={data.movie.description} />
+        <meta property="og:image" content={data.movie.poster} />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Ajoyib Film va Seriyalar" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content={`${data.movie.title} - Ajoyib Film va Seriyalar`}
+        />
+        <meta name="twitter:description" content={data.movie.description} />
+        <meta name="twitter:image" content={data.movie.poster} />
+        <meta name="twitter:url" content={window.location.href} />
+      </Helmet>
       <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       <div
         className={`min-h-screen ${
