@@ -26,6 +26,7 @@ const MovieDetails = ({ movie, darkMode }) => {
   const [muted, setMuted] = useState(false);
   const [quality, setQuality] = useState("");
   const [isPiP, setIsPiP] = useState(false);
+  const [seekInterval, setSeekInterval] = useState(null);
   const playerRef = useRef(null);
 
   useEffect(() => {
@@ -34,39 +35,61 @@ const MovieDetails = ({ movie, darkMode }) => {
     }
   }, [movie.videoUrl]);
 
-  // Play/Pause video when space bar is pressed
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.code === "Space") {
         event.preventDefault();
-        setPlaying(!playing);
+        setPlaying((prevPlaying) => !prevPlaying);
+      } else if (event.code === "ArrowRight") {
+        handleSeekForward();
+        setSeekInterval(setInterval(handleSeekForward, 1000));
+      } else if (event.code === "ArrowLeft") {
+        handleSeekBackward();
+        setSeekInterval(setInterval(handleSeekBackward, 1000));
+      } else if (event.code === "KeyF") {
+        handleFullscreenToggle();
+      }
+    };
+
+    const handleKeyUp = (event) => {
+      if (event.code === "ArrowRight" || event.code === "ArrowLeft") {
+        clearInterval(seekInterval);
+        setSeekInterval(null);
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyUp);
     };
-  }, [playing]);
+  }, [seekInterval]);
 
   const handlePlayPause = () => {
-    setPlaying(!playing);
+    setPlaying((prevPlaying) => !prevPlaying);
   };
 
   const handleSeekForward = () => {
     if (playerRef.current) {
-      playerRef.current.seekTo(played + 10 / playerRef.current.getDuration());
+      playerRef.current.seekTo(
+        played + 10 / playerRef.current.getDuration(),
+        "fraction"
+      );
     }
   };
 
   const handleSeekBackward = () => {
     if (playerRef.current) {
-      playerRef.current.seekTo(played - 10 / playerRef.current.getDuration());
+      playerRef.current.seekTo(
+        played - 10 / playerRef.current.getDuration(),
+        "fraction"
+      );
     }
   };
 
-  const handlePlaybackRateChange = () => {
-    setPlaybackRate((prevRate) => (prevRate === 2 ? 0.5 : prevRate + 0.5));
+  const handlePlaybackRateChange = (rate) => {
+    setPlaybackRate(rate);
   };
 
   const handleFullscreenToggle = () => {
@@ -76,7 +99,7 @@ const MovieDetails = ({ movie, darkMode }) => {
       } else {
         document.exitFullscreen();
       }
-      setIsFullscreen(!isFullscreen);
+      setIsFullscreen((prevFullscreen) => !prevFullscreen);
     }
   };
 
@@ -104,11 +127,17 @@ const MovieDetails = ({ movie, darkMode }) => {
   };
 
   const handleMuteToggle = () => {
-    setMuted(!muted);
+    setMuted((prevMuted) => !prevMuted);
   };
 
   const handleQualityChange = (format) => {
+    const currentTime = playerRef.current.getCurrentTime();
     setQuality(format);
+    setTimeout(() => {
+      if (playerRef.current) {
+        playerRef.current.seekTo(currentTime, "seconds");
+      }
+    }, 100); // A short delay to ensure the player has switched the source
   };
 
   const handleOpenInBrowser = () => {
@@ -123,8 +152,18 @@ const MovieDetails = ({ movie, darkMode }) => {
     return date.toISOString().substr(11, 8);
   };
 
+  const handleDoubleClick = (event) => {
+    const { left, width } = event.target.getBoundingClientRect();
+    const clickPosition = event.clientX - left;
+    if (clickPosition < width / 2) {
+      handleSeekBackward();
+    } else {
+      handleSeekForward();
+    }
+  };
+
   return (
-    <div className={`flex flex-col md:flex-row justify-between mt-32 p-4}`}>
+    <div className={`flex flex-col md:flex-row justify-between mt-32 p-4`}>
       <div className="flex-col md:flex-row p-4">
         <img
           src={movie.poster || "/big_banner.png"}
@@ -161,7 +200,7 @@ const MovieDetails = ({ movie, darkMode }) => {
             className={`relative max-w-full mx-auto mt-4 rounded-lg overflow-hidden shadow-lg ${
               playing ? "" : "cursor-pointer"
             }`}
-            onClick={handlePlayPause}
+            onDoubleClick={handleDoubleClick}
           >
             {!playing && played === 0 && (
               <div className="absolute inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50">
@@ -224,7 +263,7 @@ const MovieDetails = ({ movie, darkMode }) => {
                 }}
               />
             </div>
-            <div className="flex justify-between w-full items-center mb-2">
+            <div className="flex justify-start w-full items-center mb-2">
               <div className="flex space-x-2">
                 <button
                   onClick={handleSeekBackward}
@@ -293,19 +332,25 @@ const MovieDetails = ({ movie, darkMode }) => {
                   ))}
                 </select>
 
+                <select
+                  value={playbackRate}
+                  onChange={(e) =>
+                    handlePlaybackRateChange(parseFloat(e.target.value))
+                  }
+                  className="bg-gray-800 text-white rounded-lg p-[0.5px]"
+                >
+                  {[0.5, 1, 1.5, 2].map((rate) => (
+                    <option key={rate} value={rate}>
+                      {rate}x
+                    </option>
+                  ))}
+                </select>
                 <button
                   onClick={handlePiPToggle}
                   className="text-white hover:text-gray-300"
                 >
                   <MdPictureInPicture />
                 </button>
-                <button
-                  onClick={handlePlaybackRateChange}
-                  className="text-white hover:text-gray-300"
-                >
-                  {playbackRate}x
-                </button>
-
                 <button
                   onClick={handleFullscreenToggle}
                   className="text-white hover:text-gray-300"
@@ -314,7 +359,6 @@ const MovieDetails = ({ movie, darkMode }) => {
                 </button>
               </div>
             </div>
-
             <div className="flex justify-end w-full items-center">
               <div className="flex space-x-2">
                 <div className="flex justify-between text-sm gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-3 py-1">
