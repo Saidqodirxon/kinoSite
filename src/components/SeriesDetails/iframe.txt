@@ -1,0 +1,51 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+import React from "react";
+
+const MovieDetails = ({ movie }) => {
+  return (
+    <>
+      <div className="flex flex-col md:flex-row justify-between mt-32 p-4">
+        <div className="flex-col md:flex-row p-4">
+          <img
+            src={movie.poster}
+            alt="Movie Poster"
+            className="w-64 h-auto mb-4 md:mb-0 md:mr-4"
+          />
+          <div>
+            <h1 className="text-3xl font-bold">{movie.title}</h1>
+            <p className="mt-2">{movie.description}</p>
+            <ul className="mt-4">
+              <li>
+                <strong>Janr:</strong> {movie.genre}
+              </li>
+              <li>
+                <strong>Davomiyligi:</strong> {movie.duration}
+              </li>
+              <li>
+                <strong>Chiqqan yili:</strong> {movie.year}
+              </li>
+              <li>
+                <strong>Rejissor:</strong> {movie.director}
+              </li>
+              <li>
+                <strong>Aktiyorlar:</strong> {movie.actors}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="w-full flex justify-center mt-4">
+          <iframe
+            src={movie.videoUrl}
+            title={movie.title}
+            className="w-9/12 h-auto"
+            frameBorder="0"
+            allowFullScreen
+          ></iframe>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default MovieDetails;

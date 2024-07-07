@@ -5,6 +5,7 @@ import Home from "./pages/Home/Home";
 import MoviePage from "./pages/Movies/Movies";
 import "./App.css";
 import Navbar from "./components/Navbar/Navbar";
+import SeriesPage from "./pages/Series/Series";
 
 function App() {
   // React.useEffect(() => {
@@ -39,6 +40,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/movies" element={<MoviePage />} />
+          <Route path="/series" element={<SeriesPage />} />
         </Routes>
       </div>
     </Router>

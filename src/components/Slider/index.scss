@@ -6,10 +6,11 @@ $hover-color: crimson;
   position: relative;
   width: 100%;
   height: 100vh;
-  &.dark {
-    background: crimson !important;
-    color: crimson !important;
-  }
+
+  // &.dark {
+  //   background: crimson !important;
+  //   color: crimson !important;
+  // }
 }
 
 /* Slideshow */
@@ -179,13 +180,27 @@ $hover-color: crimson;
 
 @media (max-width: 680px) {
   .slideshowDot {
-    display: none;
+    margin: 1;
+    width: 3rem;
+    // display: flex;
+    // justify-content: space-between;
   }
 }
 
 @media (max-width: 768px) {
   .slide_img {
-    height: 350px;
+    height: 100vh;
+  }
+  .watch-button {
+    display: none;
+  }
+  .slide-content p {
+    display: none;
+  }
+
+  .slide-content h1 {
+    font-size: 60px;
+    // line-height: normal;
   }
 }
 

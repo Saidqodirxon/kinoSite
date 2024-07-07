@@ -4,6 +4,10 @@
 import React from "react";
 
 const SimilarMovies = ({ similarMovies }) => {
+  if (!similarMovies || similarMovies.length === 0) {
+    return <div className="mt-8 p-4">No similar movies available.</div>;
+  }
+
   return (
     <div className="mt-8 p-4">
       <h2 className="text-2xl font-bold">O'xshash kinolar</h2>
