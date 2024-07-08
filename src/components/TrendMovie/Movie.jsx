@@ -22,7 +22,7 @@ function Movie({ darkMode }) {
 
   useEffect(() => {
     axios
-      .get("/search?limit=15")
+      .get("/movies?limit=15")
 
       .then((response) => {
         setMovies(response.data.results);
@@ -39,7 +39,15 @@ function Movie({ darkMode }) {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <h2
+        className={`text-center ${
+          darkMode ? "bg-black text-white" : "bg-white text-black"
+        }`}
+      >
+        Yuklanmoqda...
+      </h2>
+    );
   }
 
   return (

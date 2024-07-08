@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Slider from "../../components/Slider/Slider";
 import Movie from "../../components/TrendMovie/Movie";
 import Series from "../../components/TrendSeries/Series";
+import Cartoons from "../../components/Cartoons/Cartoons";
 import Animes from "../../components/Animes/Animes";
 import Footer from "../../components/Footer/Footer";
 
@@ -28,6 +29,7 @@ export default function Main() {
       <Movie darkMode={darkMode} />
       <Series darkMode={darkMode} />
       <Animes darkMode={darkMode} />
+      <Cartoons darkMode={darkMode} />
       <Footer darkMode={darkMode} />
     </>
   );

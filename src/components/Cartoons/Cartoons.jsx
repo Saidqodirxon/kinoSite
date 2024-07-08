@@ -7,7 +7,7 @@ import { FaStar, FaEye } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
 import { Link } from "react-router-dom";
 
-function Animes({ darkMode }) {
+function Cartoons({ darkMode }) {
   const [movies, setMovies] = useState([]);
   const [visibleCount, setVisibleCount] = useState(5);
   const [loading, setLoading] = useState(true);
@@ -22,7 +22,7 @@ function Animes({ darkMode }) {
 
   useEffect(() => {
     axios
-      .get("/animes?limit=15")
+      .get("/cartoons?limit=15")
 
       .then((response) => {
         setMovies(response.data.results);
@@ -59,7 +59,7 @@ function Animes({ darkMode }) {
               darkMode ? "text-white" : "text-black"
             }`}
           >
-            Animelar
+            Multfilmlar
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {movies.slice(0, visibleCount).map((movie) => (
@@ -113,4 +113,4 @@ function Animes({ darkMode }) {
   );
 }
 
-export default Animes;
+export default Cartoons;
