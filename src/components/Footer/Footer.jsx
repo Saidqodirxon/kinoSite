@@ -2,6 +2,7 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import { FaFacebook, FaTelegram, FaInstagram, FaTiktok } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function Footer({ darkMode }) {
   return (
@@ -55,6 +56,9 @@ function Footer({ darkMode }) {
       {/* Eng pastida copyright */}
       <div className="text-center mt-8 border-t border-gray-700 pt-4 text-sm">
         © Copyright {new Date().getFullYear()}. Noyob.tv
+      </div>
+      <div className="text-center pt-2 text-sm">
+        Design by <Link to="https://t.me/alCODERSUZ">ALCODERS.UZ</Link>
       </div>
     </footer>
   );
