@@ -1,105 +1,41 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { FaStar, FaEye } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
 import { Link } from "react-router-dom";
 
-const movies = [
-  {
-    id: 1,
-    title: "Asalarichi",
-    releaseYear: 2024,
-    rating: 10,
-    duration: "180min",
-    views: 105,
-    image: "/kino_banner_1.png",
-  },
-  {
-    id: 2,
-    title: "Godzilla x Kong: The nimadir",
-    releaseYear: 2024,
-    rating: 10,
-    duration: "180min",
-    views: 105,
-    image: "/kino_banner_2.png",
-  },
-  {
-    id: 3,
-    title: "IF",
-    releaseYear: 2024,
-    rating: 10,
-    duration: "180min",
-    views: "10K",
-    image: "/kino_banner_3.png",
-  },
-  {
-    id: 4,
-    title: "Unsung hero",
-    releaseYear: 2024,
-    rating: 10,
-    duration: "180min",
-    views: 105,
-    image: "/kino_banner_4.png",
-  },
-  {
-    id: 5,
-    title: "Winnie-the-Pooh: lo... nimadir",
-    releaseYear: 2024,
-    rating: 10,
-    duration: "180min",
-    views: 105,
-    image: "/kino_banner_5.png",
-  },
-  {
-    id: 6,
-    title: "Asalarichi",
-    releaseYear: 2024,
-    rating: 10,
-    duration: "180min",
-    views: 105,
-    image: "/kino_banner_1.png",
-  },
-  {
-    id: 7,
-    title: "Godzilla x Kong: The nimadir",
-    releaseYear: 2024,
-    rating: 10,
-    duration: "180min",
-    views: 105,
-    image: "/kino_banner_2.png",
-  },
-  {
-    id: 8,
-    title: "IF",
-    releaseYear: 2024,
-    rating: 10,
-    duration: "180min",
-    views: "10K",
-    image: "/kino_banner_3.png",
-  },
-  {
-    id: 9,
-    title: "Unsung hero",
-    releaseYear: 2024,
-    rating: 10,
-    duration: "180min",
-    views: 105,
-    image: "/kino_banner_4.png",
-  },
-  {
-    id: 10,
-    title: "Winnie-the-Pooh: lo... nimadir",
-    releaseYear: 2024,
-    rating: 10,
-    duration: "180min",
-    views: 105,
-    image: "/kino_banner_5.png",
-  },
-];
-
 function Movie({ darkMode }) {
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  function truncateText(text, wordLimit) {
+    const words = text.split(" ");
+    if (words.length > wordLimit) {
+      return words.slice(0, wordLimit).join(" ") + "...";
+    }
+    return text;
+  }
+
+  useEffect(() => {
+    axios
+      .get("/movie")
+      .then((response) => {
+        setMovies(response.data.results);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the movies!", error);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <div className={`${darkMode ? "bg-black" : "bg-white"}`}>
@@ -121,22 +57,21 @@ function Movie({ darkMode }) {
               >
                 <div className="relative">
                   <img
-                    src={movie.image}
-                    alt={movie.title}
+                    src={movie.photo}
+                    alt={movie.name}
                     className="w-72 h-80 object-cover"
                   />
                   <div className="absolute top-2 left-2 bg-yellow-500 text-white rounded-full px-2 py-1 text-xs font-bold flex items-center">
-                    <FaStar className="mr-1" /> {movie.rating}
+                    <FaStar className="mr-1" /> {movie.rating || 0}
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="text-lg font-bold mb-2">{movie.title}</h3>
+                  <h3 className="text-lg font-bold mb-2">
+                    {truncateText(movie.name, 6)}
+                  </h3>
                   <div className="flex justify-between text-sm text-gray-600">
-                    <p className="flex justify-center">
-                      Yili: {movie.releaseYear}{" "}
-                      <GoDotFill className="m-[2px]" />
-                    </p>
-                    <div className="flex items-center">{movie.duration}</div>
+                    <p className="flex justify-center">Yili: {movie.year}</p>
+
                     <div className="flex items-center text-gray-600 text-sm">
                       <FaEye className="mr-1" /> {movie.views}
                     </div>

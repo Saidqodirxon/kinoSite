@@ -41,7 +41,7 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post("/news");
+        const response = await axios.post("/news?format=json");
         const data = response.data.results.map((item) => ({
           imageDark: item.photo,
           imageLight: item.photo,

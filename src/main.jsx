@@ -4,7 +4,7 @@ import App from "./App.jsx";
 import "./index.css";
 import axios from "axios";
 
-axios.defaults.baseURL = "http://185.215.166.140:8098";
+axios.defaults.baseURL = "https://v2.botdownloader.uz";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <App />
