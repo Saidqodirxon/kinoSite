@@ -57,9 +57,9 @@ function Footer({ darkMode }) {
       <div className="text-center mt-8 border-t border-gray-700 pt-4 text-sm">
         © Copyright {new Date().getFullYear()}. Noyob.tv
       </div>
-      <div className="text-center pt-2 text-sm">
+      {/* <div className="text-center pt-2 text-sm">
         Design by <Link to="https://t.me/alCODERSUZ">ALCODERS.UZ</Link>
-      </div>
+      </div> */}
     </footer>
   );
 }

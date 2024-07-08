@@ -51,6 +51,7 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
           age: item.age,
           like: item.like,
           year: item.year,
+          type: item.type,
         }));
         setSlides(data);
         console.log(data, "DATA");
@@ -100,7 +101,20 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
                 <span className="rating">
                   <FaStar className="star-icon" />
                   {slide.like} <FaCircle className="dot-icon" />
-                  {slide.year} <FaCircle className="dot-icon" /> 1-qism
+                  {slide.year} <FaCircle className="dot-icon" />
+                  {slide.type === "anime"
+                    ? "Anime"
+                    : slide.type === "movie"
+                    ? "Kino"
+                    : slide.type === "series"
+                    ? "Serial"
+                    : slide.type === "cartoon"
+                    ? "Multfilm"
+                    : slide.type === "cartoon/series"
+                    ? "Multfilm"
+                    : slide.type === "anime/series"
+                    ? "Anime"
+                    : ""}
                 </span>
                 <article className="slide-content">
                   <h1

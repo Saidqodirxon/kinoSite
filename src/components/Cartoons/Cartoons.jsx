@@ -81,7 +81,7 @@ function Cartoons({ darkMode }) {
                 </div>
                 <div className="p-4">
                   <h3 className="text-lg font-bold mb-2">
-                    {truncateText(movie.name, 6)}
+                    {truncateText(movie.name, 10)}
                   </h3>
                   <div className="flex justify-between text-sm text-gray-600">
                     <p className="flex justify-center">Yili: {movie.year}</p>
