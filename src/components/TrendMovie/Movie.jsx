@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 
 function Movie({ darkMode }) {
   const [movies, setMovies] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(5);
   const [loading, setLoading] = useState(true);
 
   function truncateText(text, wordLimit) {
@@ -21,7 +22,8 @@ function Movie({ darkMode }) {
 
   useEffect(() => {
     axios
-      .get("/movie")
+      .get("/search?limit=15")
+
       .then((response) => {
         setMovies(response.data.results);
         setLoading(false);
@@ -31,6 +33,10 @@ function Movie({ darkMode }) {
         setLoading(false);
       });
   }, []);
+
+  const loadMoreMovies = () => {
+    setVisibleCount((prevCount) => prevCount + 10);
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -45,10 +51,10 @@ function Movie({ darkMode }) {
               darkMode ? "text-white" : "text-black"
             }`}
           >
-            Trend kinolar
+            Tarjima kinolar
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {movies.map((movie) => (
+            {movies.slice(0, visibleCount).map((movie) => (
               <div
                 key={movie.id}
                 className={`shadow-lg rounded-lg overflow-hidden mx-2 ${
@@ -71,7 +77,6 @@ function Movie({ darkMode }) {
                   </h3>
                   <div className="flex justify-between text-sm text-gray-600">
                     <p className="flex justify-center">Yili: {movie.year}</p>
-
                     <div className="flex items-center text-gray-600 text-sm">
                       <FaEye className="mr-1" /> {movie.views}
                     </div>
@@ -80,17 +85,20 @@ function Movie({ darkMode }) {
               </div>
             ))}
           </div>
-          <div className="flex justify-center mt-12">
-            <Link
-              className={`btn border-2 rounded-3xl py-2 px-6 text-center ${
-                darkMode
-                  ? "border-red-600 text-white"
-                  : "border-red-700 text-black"
-              }`}
-            >
-              Ko'proq ko'rish
-            </Link>
-          </div>
+          {visibleCount < movies.length && (
+            <div className="flex justify-center mt-12">
+              <button
+                onClick={loadMoreMovies}
+                className={`btn border-2 rounded-3xl py-2 px-6 text-center ${
+                  darkMode
+                    ? "border-red-600 text-white"
+                    : "border-red-700 text-black"
+                }`}
+              >
+                Ko'proq ko'rish
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>
