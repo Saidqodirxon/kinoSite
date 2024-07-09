@@ -29,11 +29,11 @@ const MovieDetails = ({ movie, darkMode }) => {
   const [seekInterval, setSeekInterval] = useState(null);
   const playerRef = useRef(null);
 
-  useEffect(() => {
-    if (movie.videoUrl && Object.keys(movie.videoUrl).length > 0) {
-      setQuality(Object.keys(movie.videoUrl)[0]);
-    }
-  }, [movie.videoUrl]);
+  // useEffect(() => {
+  //   if (movie.videoUrl && Object.keys(movie.videoUrl).length > 0) {
+  //     setQuality(Object.keys(movie.videoUrl)[0]);
+  //   }
+  // }, [movie.videoUrl]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -172,7 +172,7 @@ const MovieDetails = ({ movie, darkMode }) => {
         />
         <div>
           <h1 className="text-3xl font-bold my-2">
-            {movie.title || "No Title"}
+            {movie.name || "No Title"}
           </h1>
           <p className="mt-2">{movie.description || "No Description"}</p>
           <ul className="mt-4">
@@ -194,7 +194,7 @@ const MovieDetails = ({ movie, darkMode }) => {
           </ul>
         </div>
       </div>
-      {movie.videoUrl ? (
+      {movie.f480 || movie.f720 || movie.f1080 ? (
         <div className="relative max-w-full mx-auto rounded-lg overflow-hidden shadow-lg">
           <div
             className={`relative max-w-full mx-auto mt-4 rounded-lg overflow-hidden shadow-lg ${
@@ -205,7 +205,7 @@ const MovieDetails = ({ movie, darkMode }) => {
             {!playing && played === 0 && (
               <div className="absolute inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50">
                 <img
-                  src={movie.poster || "https://via.placeholder.com/150"}
+                  src={movie.poster || "/big_banner.png"}
                   alt="Movie Poster"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
@@ -389,14 +389,14 @@ const MovieDetails = ({ movie, darkMode }) => {
             </div>
           </div>
         </div>
-      ) : movie.iframeLink ? (
+      ) : movie.additional_player ? (
         <div className="w-full flex justify-center mt-4">
           <iframe
-            src={movie.iframeLink}
+            src={movie.additional_player}
             frameBorder="0"
             allowFullScreen
-            width="100%"
-            height="auto"
+            width="875px"
+            height="575px"
             className=""
             title={movie.title || "No Title"}
           />

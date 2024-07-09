@@ -70,7 +70,10 @@ const SeriesPage = () => {
   return (
     <>
       <Helmet>
-        <title>{data.series.title} - Ajoyib Film va Seriyalar</title>
+        <title>
+          {data.series.title} | Noyob.Tv - Ajoyib Tarjima film, Anime, Multfilm
+          va Seriyallar
+        </title>
         <meta name="description" content={data.series.description} />
         <meta
           name="keywords"

@@ -6,6 +6,7 @@ import MoviePage from "./pages/Movies/Movies";
 import "./App.css";
 import Navbar from "./components/Navbar/Navbar";
 import SeriesPage from "./pages/Series/Series";
+import Filters from "./pages/Filters/Filters";
 
 function App() {
   // React.useEffect(() => {
@@ -39,8 +40,9 @@ function App() {
       <div className="container-big">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/movies" element={<MoviePage />} />
+          <Route path="/movies/:id" element={<MoviePage />} />
           <Route path="/series" element={<SeriesPage />} />
+          <Route path="/filter" element={<Filters />} />
         </Routes>
       </div>
     </Router>

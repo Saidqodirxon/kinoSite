@@ -52,7 +52,7 @@ function Animes({ darkMode }) {
 
   return (
     <>
-      <div className={`${darkMode ? "bg-black" : "bg-white"}`}>
+      <section className={`${darkMode ? "bg-black" : "bg-white"}`} id="animes">
         <div className={`container mx-auto px-4 pt-36 `}>
           <h2
             className={`text-4xl font-bold mb-4 py-4 ${
@@ -63,8 +63,15 @@ function Animes({ darkMode }) {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {movies.slice(0, visibleCount).map((movie) => (
-              <div
+              <Link
                 key={movie.id}
+                to={
+                  movie.type === "anime"
+                    ? `/series/${movie.name}`
+                    : movie.type === "anime/series"
+                    ? `/series/${movie.name}`
+                    : `/`
+                }
                 className={`shadow-lg rounded-lg overflow-hidden mx-2 ${
                   darkMode ? "bg-gray-800 text-white" : "bg-white text-black"
                 }`}
@@ -90,7 +97,7 @@ function Animes({ darkMode }) {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
           {visibleCount < movies.length && (
@@ -108,7 +115,7 @@ function Animes({ darkMode }) {
             </div>
           )}
         </div>
-      </div>
+      </section>
     </>
   );
 }

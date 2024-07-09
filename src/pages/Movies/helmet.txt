@@ -1,0 +1,45 @@
+    <Helmet>
+        <title>
+          {data.name} | Noyob.Tv - Ajoyib Tarjima film, Anime, Multfilm va
+          Seriyallar
+        </title>
+        <meta
+          name="description"
+          content={data.description || "No Description"}
+        />
+        <meta
+          name="keywords"
+          content={`${data.name}, Film, ${data.genre || "No Genre"}, ${
+            data.director || "No Director"
+          }, ${data.actors || "No Actors"}, ${data.year || "No Year"}`}
+        />
+        <meta
+          property="og:title"
+          content={`${data.name} - Ajoyib Film va Seriyalar`}
+        />
+        <meta
+          property="og:description"
+          content={data.description || "No Description"}
+        />
+        <meta
+          property="og:image"
+          content={data.poster || "/default_poster.png"}
+        />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Ajoyib Film va Seriyalar" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content={`${data.name} - Ajoyib Film va Seriyalar`}
+        />
+        <meta
+          name="twitter:description"
+          content={data.description || "No Description"}
+        />
+        <meta
+          name="twitter:image"
+          content={data.poster || "/default_poster.png"}
+        />
+        <meta name="twitter:url" content={window.location.href} />
+      </Helmet>

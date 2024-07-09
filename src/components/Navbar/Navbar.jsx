@@ -1,55 +1,55 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { FaMoon, FaSun, FaBars, FaTimes, FaAngleDown } from "react-icons/fa";
 import "./index.scss";
-import { Link } from "react-router-dom";
+import { HashLink as Link } from "react-router-hash-link";
 import { CiSearch } from "react-icons/ci";
 import logoDark from "/logo_dark_mode.png";
 import logoLight from "/logo_light_mode.png";
 import { FaCircle } from "react-icons/fa";
-
-const genres = [
-  "Action",
-  "Adventure",
-  "Animation",
-  "Biography",
-  "Comedy",
-  "Crime",
-  "Drama",
-  "Family",
-  "Fantasy",
-  "History",
-  "Horror",
-  "Kids",
-  "Music",
-  "Mystery",
-  "News",
-  "Reality",
-  "Romance",
-  "Sci-Fi & Fantasy",
-  "Science Fiction",
-  "Soap",
-  "Talk",
-  "Thriller",
-  "War & Politics",
-  "TV Movie",
-  "War",
-  "Documentary",
-  "Western",
-];
-
-const countries = ["USA", "UK", "France", "Germany", "Italy"];
-const years = ["2020", "2021", "2022", "2023", "2024"];
 
 const Navbar = ({ darkMode, toggleDarkMode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
+  const [genres, setGenres] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [years, setYears] = useState([]);
   const dropdownRef = useRef(null);
   const countryDropdownRef = useRef(null);
   const yearDropdownRef = useRef(null);
+
+  useEffect(() => {
+    axios
+      .get("/genres")
+      .then((response) => {
+        setGenres(response.data.genres);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the genres!", error);
+      });
+
+    axios
+      .get("/states")
+      .then((response) => {
+        setCountries(response.data.states);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the countries!", error);
+      });
+
+    axios
+      .get("/years")
+      .then((response) => {
+        setYears(response.data.years);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the years!", error);
+      });
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -96,10 +96,10 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
               <Link to="/" className="menu-item">
                 Bosh sahifa
               </Link>
-              <Link to="/movies" className="menu-item">
+              <Link to="/#movies" className="menu-item">
                 Kinolar
               </Link>
-              <Link to="/series" className="menu-item">
+              <Link to="/#series" className="menu-item">
                 Seriallar
               </Link>
               <div className="relative" ref={dropdownRef}>
@@ -121,7 +121,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                       {genres.map((genre) => (
                         <Link
                           key={genre}
-                          to={`/genre/${genre.toLowerCase()}`}
+                          to={`/filter?genre=${genre}`}
                           className={`block px-1 py-1 hover:border-b-2 hover:border-red-700 hover:font-bold ${
                             darkMode
                               ? "text-[rgba(255,255,255,0.5)]"
@@ -157,7 +157,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                       {countries.map((country) => (
                         <Link
                           key={country}
-                          to={`/country/${country.toLowerCase()}`}
+                          to={`/filter?state=${country}`}
                           className={`block px-1 py-1 hover:border-b-2 hover:border-red-700 hover:font-bold ${
                             darkMode
                               ? "text-[rgba(255,255,255,0.5)]"
@@ -191,7 +191,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                       {years.map((year) => (
                         <Link
                           key={year}
-                          to={`/year/${year}`}
+                          to={`/filter?year=${year}`}
                           className={`block px-1 py-1 hover:border-b-2 hover:border-red-700 hover:font-bold ${
                             darkMode
                               ? "text-[rgba(255,255,255,0.5)]"
@@ -255,7 +255,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
             <Link to="/" className="mobile-menu-item">
               Bosh sahifa
             </Link>
-            <Link to="/movies" className="mobile-menu-item">
+            <Link to="#movies" className="mobile-menu-item">
               Kinolar
             </Link>
             <Link to="/series" className="mobile-menu-item">
@@ -280,7 +280,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                     {genres.map((genre) => (
                       <Link
                         key={genre}
-                        to={`/genre/${genre.toLowerCase()}`}
+                        to={`/filter?genre=${genre}`}
                         className={`block px-1 py-1 hover:border-b-2 hover:border-red-700 hover:font-bold ${
                           darkMode
                             ? "text-[rgba(255,255,255,0.5)]"
@@ -314,7 +314,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                     {countries.map((country) => (
                       <Link
                         key={country}
-                        to={`/country/${country.toLowerCase()}`}
+                        to={`/filter?state=${country}`}
                         className={`block px-1 py-1 hover:border-b-2 hover:border-red-700 hover:font-bold ${
                           darkMode
                             ? "text-[rgba(255,255,255,0.5)]"
@@ -348,7 +348,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                     {years.map((year) => (
                       <Link
                         key={year}
-                        to={`/year/${year}`}
+                        to={`/filter?year=${year}`}
                         className={`block px-1 py-1 hover:border-b-2 hover:border-red-700 hover:font-bold ${
                           darkMode
                             ? "text-[rgba(255,255,255,0.5)]"

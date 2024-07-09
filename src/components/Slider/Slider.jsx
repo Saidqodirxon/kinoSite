@@ -6,7 +6,7 @@ import { FaStar, FaCircle } from "react-icons/fa";
 import "./index.scss";
 import axios from "axios";
 
-const delay = 2500;
+const delay = 5000;
 
 function truncateText(text, wordLimit) {
   const words = text.split(" ");
