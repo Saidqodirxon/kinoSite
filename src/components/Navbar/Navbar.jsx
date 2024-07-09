@@ -255,10 +255,10 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
             <Link to="/" className="mobile-menu-item">
               Bosh sahifa
             </Link>
-            <Link to="#movies" className="mobile-menu-item">
+            <Link to="/#movies" className="mobile-menu-item">
               Kinolar
             </Link>
-            <Link to="/series" className="mobile-menu-item">
+            <Link to="/#series" className="mobile-menu-item">
               Seriallar
             </Link>
             <div className="relative">
