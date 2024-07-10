@@ -20,26 +20,35 @@ const MoviePage = () => {
   const [similarMovies, setSimilarMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [data, setData] = useState("");
 
   useEffect(() => {
     // Fetch movie details from the API
     axios
-      .get(`/info/${id}?format=json`)
+      .get(`/movie/${id}`)
       .then((response) => {
-        setMovieData(response.data.result);
-
-        // Fetch comments for the movie
-        // return axios.get(`/comments/${id}?format=json`);
+        setMovieData(response.data.info);
+        setComments(response.data.comments);
+        setData(response.data.result);
+        // Get all genres from the movie data
+        const genres = response.data.info.genre;
+        // Fetch similar movies for each genre
+        const genreRequests = genres.map((genre) =>
+          axios.get(`/filter/movies/?genre=${genre}`)
+        );
+        console.log(response.data.comments, "COMMENTS");
+        return Promise.all(genreRequests);
       })
-      .then((response) => {
-        setComments(response.data.result || []);
-
-        // Fetch similar movies based on genre
-        const genreQuery = movieData.genre.join(","); // Convert genre array to comma-separated string
-        return axios.get(`/filter/movies/?genre=${genreQuery}&format=json`);
-      })
-      .then((response) => {
-        setSimilarMovies(response.data.results || []);
+      .then((responses) => {
+        // Collect similar movies from all genre responses
+        const allSimilarMovies = responses.flatMap(
+          (response) => response.data.results
+        );
+        // Remove duplicates based on movie ID
+        const uniqueMovies = Array.from(
+          new Map(allSimilarMovies.map((movie) => [movie.id, movie])).values()
+        );
+        setSimilarMovies(uniqueMovies);
       })
       .catch((error) => {
         console.error("Failed to fetch data", error);
@@ -48,7 +57,7 @@ const MoviePage = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [id, movieData?.genre]);
+  }, [id]);
 
   useEffect(() => {
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
@@ -70,8 +79,12 @@ const MoviePage = () => {
         }`}
       >
         <div className="container mx-auto p-4">
-          <MovieDetails movie={movieData} darkMode={darkMode} />
-          <CommentsSection comments={comments} darkMode={darkMode} />
+          <MovieDetails movie={movieData} data={data} darkMode={darkMode} />
+          <CommentsSection
+            comments={comments}
+            movieId={data.id}
+            darkMode={darkMode}
+          />
           <SimilarMovies similarMovies={similarMovies} darkMode={darkMode} />
         </div>
       </div>
@@ -81,4 +94,3 @@ const MoviePage = () => {
 };
 
 export default MoviePage;
-//

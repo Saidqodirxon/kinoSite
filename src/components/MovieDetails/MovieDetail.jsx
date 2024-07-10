@@ -16,8 +16,11 @@ import { CiSaveDown2 } from "react-icons/ci";
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa";
 import { MdPictureInPicture } from "react-icons/md";
+import { HashLink as Link } from "react-router-hash-link";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-const MovieDetails = ({ movie, darkMode }) => {
+const MovieDetails = ({ movie, data, darkMode }) => {
   const [playing, setPlaying] = useState(false);
   const [played, setPlayed] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
@@ -27,6 +30,8 @@ const MovieDetails = ({ movie, darkMode }) => {
   const [quality, setQuality] = useState("");
   const [isPiP, setIsPiP] = useState(false);
   const [seekInterval, setSeekInterval] = useState(null);
+  const [liked, setLiked] = useState(false);
+  const [disliked, setDisliked] = useState(false);
   const playerRef = useRef(null);
 
   // useEffect(() => {
@@ -161,40 +166,94 @@ const MovieDetails = ({ movie, darkMode }) => {
       handleSeekForward();
     }
   };
+  const handleLike = () => {
+    // If already liked, do nothing
+    if (liked) return;
+
+    axios
+      .post("/movie/like/", {
+        movie_id: movie.id,
+        like_action: "like",
+      })
+      .then(() => {
+        setLiked(true);
+        toast.success("Like bosdingiz!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        if (disliked) setDisliked(false); // If disliked before, reset dislike
+      })
+      .catch((error) => {
+        console.error("Error liking the movie:", error);
+      });
+  };
+
+  const handleDislike = () => {
+    // If already disliked, do nothing
+    if (disliked) return;
+
+    axios
+      .post("/movie/like/", {
+        movie_id: movie.id,
+        like_action: "dislike",
+      })
+      .then(() => {
+        setDisliked(true);
+        // react-toastify succes
+        toast.success("Dislike bosdingiz!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+
+        if (liked) setLiked(false); // If liked before, reset like
+      })
+      .catch((error) => {
+        console.error("Error disliking the movie:", error);
+      });
+  };
 
   return (
     <div className={`flex flex-col md:flex-row justify-between mt-32 p-4`}>
       <div className="flex-col md:flex-row p-4">
         <img
-          src={movie.poster || "/big_banner.png"}
+          src={movie.photo || "/big_banner.png"}
           alt="Movie Poster"
           className="w-64 h-auto mb-4 md:mb-0 md:mr-4"
         />
         <div>
-          <h1 className="text-3xl font-bold my-2">
-            {movie.name || "No Title"}
-          </h1>
-          <p className="mt-2">{movie.description || "No Description"}</p>
+          <h1 className="text-3xl font-bold my-2">{movie.name || ""}</h1>
+          <p className="mt-2">{movie.description || ""}</p>
           <ul className="mt-4">
             <li>
-              <strong>Janr:</strong> {movie.genre || "No Genre"}
+              <strong>Janr:</strong> {movie.genre || ""}
             </li>
-            <li>
+            {/* <li>
               <strong>Davomiyligi:</strong> {movie.duration || "No Duration"}
+            </li> */}
+            <li>
+              <strong>Chiqqan yili:</strong> {movie.year || ""}
             </li>
             <li>
-              <strong>Chiqqan yili:</strong> {movie.year || "No Year"}
+              <strong>Tili:</strong> {movie.language || ""}
             </li>
             <li>
-              <strong>Rejissor:</strong> {movie.director || "No Director"}
-            </li>
+              <strong>Chiqarilgan davlat:</strong> {movie.state || ""}
+            </li>{" "}
             <li>
-              <strong>Aktiyorlar:</strong> {movie.actors || "No Actors"}
+              <strong>Yosh chegarasi:</strong> {`${movie.age}+` || ""}
             </li>
           </ul>
         </div>
       </div>
-      {movie.f480 || movie.f720 || movie.f1080 ? (
+      {data.f480 || data.f720 || data.f1080 ? (
         <div className="relative max-w-full mx-auto rounded-lg overflow-hidden shadow-lg">
           <div
             className={`relative max-w-full mx-auto mt-4 rounded-lg overflow-hidden shadow-lg ${
@@ -205,9 +264,9 @@ const MovieDetails = ({ movie, darkMode }) => {
             {!playing && played === 0 && (
               <div className="absolute inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50">
                 <img
-                  src={movie.poster || "/big_banner.png"}
+                  src={movie.photo || "/big_banner.png"}
                   alt="Movie Poster"
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-fill"
                 />
                 <button
                   onClick={handlePlayPause}
@@ -219,14 +278,22 @@ const MovieDetails = ({ movie, darkMode }) => {
             )}
             <ReactPlayer
               ref={playerRef}
-              url={movie.videoUrl[quality]}
+              url={
+                data.f480
+                  ? data.f480
+                  : data.f720
+                  ? data.f720
+                  : data.f1080
+                  ? data.f1080
+                  : data.f480
+              }
               playing={playing}
               volume={volume}
               muted={muted}
               playbackRate={playbackRate}
               onProgress={handleProgress}
-              width="100%"
-              height="auto"
+              width="875px"
+              height="575px"
               controls={false}
               className="video-player"
             />
@@ -325,7 +392,11 @@ const MovieDetails = ({ movie, darkMode }) => {
                   onChange={(e) => handleQualityChange(e.target.value)}
                   className="bg-gray-800 text-white rounded-lg p-[0.5px]"
                 >
-                  {Object.keys(movie.videoUrl || {}).map((format) => (
+                  {Object.keys({
+                    ...(data.f480 && { "480px": data.f480 }),
+                    ...(data.f720 && { "720px": data.f720 }),
+                    ...(data.f1080 && { "1080px": data.f1080 }),
+                  }).map((format) => (
                     <option key={format} value={format}>
                       {format}
                     </option>
@@ -362,18 +433,18 @@ const MovieDetails = ({ movie, darkMode }) => {
             <div className="flex justify-end w-full items-center">
               <div className="flex space-x-2">
                 <div className="flex justify-between text-sm gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-3 py-1">
-                  <button className="text-white hover:text-gray-300">
-                    <AiOutlineLike />
+                  <button className="text-white hover:text-gray-300 flex justify-between items-center gap-1">
+                    {movie.like} <AiOutlineLike onClick={handleLike} />
                   </button>
                   |
-                  <button className="text-white hover:text-gray-300">
-                    <AiOutlineDislike />
+                  <button className="text-white hover:text-gray-300 flex justify-between items-center gap-1">
+                    <AiOutlineDislike onClick={handleDislike} /> {movie.dislike}
                   </button>
                 </div>
 
                 <button className="flex justify-between text-sm text-center items-center gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-3 py-1 text-white hover:text-gray-300">
                   <FaRegComment />
-                  <p>Izoh</p>
+                  <Link to={`/movies/${data.id}/#izoh`}>Izoh</Link>
                 </button>
 
                 <button className="flex justify-between text-sm text-center items-center gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-3 py-1 text-white hover:text-gray-300">
@@ -389,10 +460,10 @@ const MovieDetails = ({ movie, darkMode }) => {
             </div>
           </div>
         </div>
-      ) : movie.additional_player ? (
+      ) : data.additional_player ? (
         <div className="w-full flex justify-center mt-4">
           <iframe
-            src={movie.additional_player}
+            src={data.additional_player}
             frameBorder="0"
             allowFullScreen
             width="875px"
