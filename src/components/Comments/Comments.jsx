@@ -21,9 +21,9 @@ const CommentsSection = ({ comments, movieId, darkMode }) => {
       movie_id: movieId,
     };
     console.log("Yangi izoh:", newComment);
-    // setName("");
-    // setEmail("");
-    // setCommentText("");
+    setName("");
+    setEmail("");
+    setCommentText("");
 
     try {
       await axios.post(`/comments/create/`, newComment);
@@ -75,7 +75,7 @@ const CommentsSection = ({ comments, movieId, darkMode }) => {
             onChange={(e) => setName(e.target.value)}
             required
             className={`border border-gray-300 rounded-full h-8 p-1.5 w-full ${
-              darkMode ? "text-black" : "text-white"
+              darkMode ? "bg-black" : "bg-white"
             }`}
           />
 
@@ -87,7 +87,7 @@ const CommentsSection = ({ comments, movieId, darkMode }) => {
             onChange={(e) => setEmail(e.target.value)}
             required
             className={`border border-gray-300 rounded-full h-8 p-1.5 w-full ${
-              darkMode ? "text-black" : "text-white"
+              darkMode ? "bg-black" : "bg-white"
             }`}
           />
 
@@ -99,7 +99,7 @@ const CommentsSection = ({ comments, movieId, darkMode }) => {
             required
             rows="1"
             className={`border border-gray-300 rounded-full p-1.5 w-full ${
-              darkMode ? "text-black" : "text-white"
+              darkMode ? "bg-black" : "bg-white"
             }`}
           />
 

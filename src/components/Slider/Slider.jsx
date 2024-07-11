@@ -91,56 +91,59 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
           }}
         >
           {slides.map((slide, idx) => (
-            <div
-              className="slide"
-              style={{ width: "100%", position: "relative" }}
-              key={idx}
-            >
-              <div className="slide-overlay">
-                <span className="years-text">{slide.age}+</span>
-                <span className="rating">
-                  <FaStar className="star-icon" />
-                  {slide.like} <FaCircle className="dot-icon" />
-                  {slide.year} <FaCircle className="dot-icon" />
-                  {slide.type === "anime"
-                    ? "Anime"
-                    : slide.type === "movie"
-                    ? "Kino"
-                    : slide.type === "series"
-                    ? "Serial"
-                    : slide.type === "cartoon"
-                    ? "Multfilm"
-                    : slide.type === "cartoon/series"
-                    ? "Multfilm"
-                    : slide.type === "anime/series"
-                    ? "Anime"
-                    : ""}
-                </span>
-                <article className="slide-content">
-                  <h1
-                    className={`font-bold lg:text-5xl sm:text-3xl ${
-                      darkMode ? "text-white" : "text-black"
-                    }`}
-                  >
-                    {slide.title}
-                  </h1>
-                  <p
-                    className={`lg:text-2xl sm:text-xl slide-desc ${
-                      darkMode ? "text-white" : "text-black"
-                    }`}
-                    dangerouslySetInnerHTML={{
-                      __html: splitTextIntoLines(slide.description, 10),
-                    }}
-                  />
-                  <button className="watch-button">Tomosha qilish</button>
-                </article>
+            <>
+              <div
+                className="slide"
+                style={{ width: "100%", position: "relative" }}
+                key={idx}
+              >
+                <div className="slide-overlay">
+                  <span className="years-text">{slide.age}+</span>
+                  <span className="rating">
+                    <FaStar className="star-icon" />
+                    {slide.like} <FaCircle className="dot-icon" />
+                    {slide.year} <FaCircle className="dot-icon" />
+                    {slide.type === "anime"
+                      ? "Anime"
+                      : slide.type === "movie"
+                      ? "Kino"
+                      : slide.type === "series"
+                      ? "Serial"
+                      : slide.type === "cartoon"
+                      ? "Multfilm"
+                      : slide.type === "cartoon/series"
+                      ? "Multfilm"
+                      : slide.type === "anime/series"
+                      ? "Anime"
+                      : ""}
+                  </span>
+                  <div className="slide-content">
+                    <h1
+                      className={`font-bold lg:text-5xl sm:text-3xl ${
+                        darkMode ? "text-white" : "text-black"
+                      }`}
+                    >
+                      {slide.title}
+                    </h1>
+                    <p
+                      className={`lg:text-2xl sm:text-xl slide-desc ${
+                        darkMode ? "text-white" : "text-black"
+                      }`}
+                      dangerouslySetInnerHTML={{
+                        __html: splitTextIntoLines(slide.description, 10),
+                      }}
+                    />
+
+                    <button className="watch-button">Tomosha qilish</button>
+                  </div>
+                </div>
+                <img
+                  className="slide_img object-cover"
+                  src={darkMode ? slide.imageDark : slide.imageLight}
+                  alt={slide.alt}
+                />
               </div>
-              <img
-                className="slide_img object-cover"
-                src={darkMode ? slide.imageDark : slide.imageLight}
-                alt={slide.alt}
-              />
-            </div>
+            </>
           ))}
         </div>
 
