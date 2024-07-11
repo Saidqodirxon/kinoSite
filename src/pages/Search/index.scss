@@ -1,0 +1,16 @@
+$light-mode-color: rgba(0, 0, 0, 0.4);
+$dark-mode-color: rgba(255, 255, 255, 0.5);
+
+input {
+  border-radius: 2rem;
+  background: transparent;
+  padding-left: 0.5rem;
+  outline: none;
+  padding: 2rem;
+}
+
+input:focus {
+  background-color: transparent;
+  outline: none;
+  border-color: $dark-mode-color;
+}

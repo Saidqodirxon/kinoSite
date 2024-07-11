@@ -7,6 +7,7 @@ import "./App.css";
 import Navbar from "./components/Navbar/Navbar";
 import SeriesPage from "./pages/Series/Series";
 import Filters from "./pages/Filters/Filters";
+import Search from "./pages/Search/Search";
 
 function App() {
   // React.useEffect(() => {
@@ -43,6 +44,7 @@ function App() {
           <Route path="/movies/:id" element={<MoviePage />} />
           <Route path="/series" element={<SeriesPage />} />
           <Route path="/filter" element={<Filters />} />
+          <Route path="/search" element={<Search />} />
         </Routes>
       </div>
     </Router>

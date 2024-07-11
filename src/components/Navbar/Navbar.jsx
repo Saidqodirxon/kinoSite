@@ -4,11 +4,12 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { FaMoon, FaSun, FaBars, FaTimes, FaAngleDown } from "react-icons/fa";
 import "./index.scss";
-import { HashLink as Link } from "react-router-hash-link";
+import { HashLink } from "react-router-hash-link";
 import { CiSearch } from "react-icons/ci";
 import logoDark from "/logo_dark_mode.png";
 import logoLight from "/logo_light_mode.png";
 import { FaCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Navbar = ({ darkMode, toggleDarkMode }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -96,12 +97,12 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
               <Link to="/" className="menu-item">
                 Bosh sahifa
               </Link>
-              <Link to="/#movies" className="menu-item">
+              <HashLink to="/#movies" className="menu-item">
                 Kinolar
-              </Link>
-              <Link to="/#series" className="menu-item">
+              </HashLink>
+              <HashLink to="/#series" className="menu-item">
                 Seriallar
-              </Link>
+              </HashLink>
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -206,10 +207,11 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                   </div>
                 )}
               </div>
-              <div className="flex search-box">
+
+              <Link to={"/search"} className="flex search-box">
                 <input type="text" placeholder="Qidiruv" className="" />
                 <CiSearch className="text-2xl" />
-              </div>
+              </Link>
               <button onClick={toggleDarkMode} className="mode-toggle">
                 {darkMode ? (
                   <FaCircle className="text-2xl" />
@@ -228,7 +230,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                   <FaCircle className="text-2xl" />
                 )}
               </button>
-              <Link to={"#"}>
+              <Link to={"/search"}>
                 <CiSearch className="text-3xl" />
               </Link>
               <button
@@ -255,12 +257,12 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
             <Link to="/" className="mobile-menu-item">
               Bosh sahifa
             </Link>
-            <Link to="/#movies" className="mobile-menu-item">
+            <HashLink to="/#movies" className="mobile-menu-item">
               Kinolar
-            </Link>
-            <Link to="/#series" className="mobile-menu-item">
+            </HashLink>
+            <HashLink to="/#series" className="mobile-menu-item">
               Seriallar
-            </Link>
+            </HashLink>
             <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}

@@ -83,7 +83,7 @@ function Animes({ darkMode }) {
                     className="w-72 h-80 object-cover"
                   />
                   <div className="absolute top-2 left-2 bg-yellow-500 text-white rounded-full px-2 py-1 text-xs font-bold flex items-center">
-                    <FaStar className="mr-1" /> {movie.rating || 0}
+                    <FaStar className="mr-1" /> {movie.like || 0}
                   </div>
                 </div>
                 <div className="p-4">

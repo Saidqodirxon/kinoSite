@@ -7,6 +7,7 @@ import SimilarMovies from "../../components/SimilarMovies/SimilarMovies";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import MovieDetails from "../../components/MovieDetails/MovieDetail";
+import Loading from "../../components/Loading/Loading";
 
 const MoviePage = () => {
   const { id } = useParams();
@@ -67,7 +68,7 @@ const MoviePage = () => {
     setDarkMode((prevDarkMode) => !prevDarkMode);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loading />;
   if (error) return <div>{error}</div>;
 
   return (
