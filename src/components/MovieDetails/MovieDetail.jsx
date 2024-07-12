@@ -280,13 +280,8 @@ const MovieDetails = ({ movie, data, darkMode }) => {
         </div>
 
         <div className="flex gap-4">
-          <div className="mt-10">
-            <h1 className="text-4xl mb-10">Film haqida:</h1>
-
-            <h1 className="text-2xl my-2">
-              <strong>Nomi: </strong>
-              {movie.name || ""}
-            </h1>
+          <div className="mt-10 leading-6">
+            <h1 className="text-4xl font-bold  my-2">{movie.name || ""}</h1>
             <p className="mt-2">{movie.description || ""}</p>
             <ul className="mt-4">
               <li>
@@ -309,7 +304,8 @@ const MovieDetails = ({ movie, data, darkMode }) => {
                 <strong>Yosh chegarasi:</strong> {`${movie.age}+` || ""}
               </li>
               <li>
-                <strong>Film haqida:</strong> <h2>{movie.info}</h2>
+                <strong>Film haqida:</strong>{" "}
+                <h2 className="leading-7">{movie.info}</h2>
               </li>
             </ul>
           </div>

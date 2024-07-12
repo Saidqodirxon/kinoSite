@@ -1,6 +1,18 @@
 /* Umumiy scrollbar uslublari */
 
 /* Firefox uchun */
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: #000 !important;
+}
+
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
 html {
   scrollbar-width: thin; /* Ingichka scrollbar */
   scrollbar-color: #9e9e9e #f0f0f0; /* Kulrang scrollbar va track */
