@@ -69,7 +69,7 @@ const MoviePage = () => {
   };
 
   if (loading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  // if (error) return <div>{error}</div>;
 
   return (
     <>
