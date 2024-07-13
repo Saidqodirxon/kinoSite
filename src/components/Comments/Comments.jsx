@@ -5,11 +5,10 @@ import { format } from "date-fns";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const CommentsSection = ({ comments, movieId, darkMode }) => {
+const CommentsSection = ({ comments, movieId, darkMode, fetchComments }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [commentText, setCommentText] = useState("");
-  const [commentss, setComments] = useState();
   const commentSectionRef = useRef(null);
 
   const handleCommentSubmit = async (event) => {
@@ -27,9 +26,8 @@ const CommentsSection = ({ comments, movieId, darkMode }) => {
 
     try {
       await axios.post(`/comments/create/`, newComment);
-      // Izohlarni yangilash
-      const response = await axios.get(`/movie/${movieId}`);
-      setComments(response.data.comments);
+      // Re-fetch comments
+      fetchComments();
       toast.success("Izoh qo'shildi!", {
         position: "top-right",
         autoClose: 5000,
@@ -65,7 +63,7 @@ const CommentsSection = ({ comments, movieId, darkMode }) => {
       <div className="mt-4 mb-6">
         <form
           onSubmit={handleCommentSubmit}
-          className="flex justify-between gap-2 items-center flex-row "
+          className="flex flex-col gap-2 sm:flex-row sm:gap-4 items-center"
         >
           <input
             type="text"
@@ -74,8 +72,8 @@ const CommentsSection = ({ comments, movieId, darkMode }) => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className={`border border-gray-300 rounded-full h-8 p-1.5 w-full ${
-              darkMode ? "bg-black" : "bg-white"
+            className={`border border-gray-300 rounded-full h-10 p-2 w-full ${
+              darkMode ? "bg-black text-white" : "bg-white text-black"
             }`}
           />
 
@@ -86,8 +84,8 @@ const CommentsSection = ({ comments, movieId, darkMode }) => {
             placeholder="Email kiriting..."
             onChange={(e) => setEmail(e.target.value)}
             required
-            className={`border border-gray-300 rounded-full h-8 p-1.5 w-full ${
-              darkMode ? "bg-black" : "bg-white"
+            className={`border border-gray-300 rounded-full h-10 p-2 w-full ${
+              darkMode ? "bg-black text-white" : "bg-white text-black"
             }`}
           />
 
@@ -98,14 +96,14 @@ const CommentsSection = ({ comments, movieId, darkMode }) => {
             placeholder="Izohingizni yozing..."
             required
             rows="1"
-            className={`border border-gray-300 rounded-full p-1.5 w-full ${
-              darkMode ? "bg-black" : "bg-white"
+            className={`border border-gray-300 rounded-full p-2 w-full ${
+              darkMode ? "bg-black text-white" : "bg-white text-black"
             }`}
           />
 
           <button
             type="submit"
-            className="bg-red-600 text-white px-20 text-center rounded-full hover:bg-red-700"
+            className="bg-red-600 text-white px-6 py-2 text-center rounded-full hover:bg-red-700 mt-2 sm:mt-0"
           >
             Izoh qoldirish
           </button>
@@ -118,9 +116,7 @@ const CommentsSection = ({ comments, movieId, darkMode }) => {
         }`}
         ref={commentSectionRef}
       >
-        {comments ||
-        (commentss && comments.length > 0) ||
-        commentss.length > 0 ? (
+        {comments && comments.length > 0 ? (
           comments.map((comment, index) => {
             let formattedDate;
             try {
@@ -135,28 +131,34 @@ const CommentsSection = ({ comments, movieId, darkMode }) => {
 
             return (
               <div
-                className="mt-4 p-2 border-b border-gray-300 rounded-md"
+                className="mt-4 p-2 border-b border-gray-300 dark:border-gray-600 rounded-md"
                 key={index}
               >
                 <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 rounded-full bg-gray-400 text-white flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-gray-400 dark:bg-gray-600 text-white flex items-center justify-center">
                     {comment.name[0] || ""}
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 overflow-hidden">
                     <div className="flex items-center justify-between">
-                      <p className="font-bold">{comment.name || ""}</p>
-                      <p className="text-gray-500 text-sm">
+                      <p className="font-bold text-black dark:text-white truncate">
+                        {comment.name || ""}
+                      </p>
+                      <p className="text-gray-500 text-sm dark:text-gray-400 truncate">
                         {formattedDate || ""}
                       </p>
                     </div>
-                    <p>{comment.comment || ""}</p>
+                    <p className="text-black dark:text-white break-words">
+                      {comment.comment || ""}
+                    </p>
                   </div>
                 </div>
               </div>
             );
           })
         ) : (
-          <p className="text-gray-500">Izohlar mavjud emas.</p>
+          <p className="text-gray-500 dark:text-gray-400">
+            Izohlar mavjud emas.
+          </p>
         )}
       </div>
     </div>

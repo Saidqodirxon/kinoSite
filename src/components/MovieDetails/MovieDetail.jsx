@@ -36,8 +36,8 @@ const MovieDetails = ({ movie, data, darkMode }) => {
   const [quality, setQuality] = useState("");
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
-  const [likeCount, setLikeCount] = useState(movie.like_count || 0); // Initialize like count
-  const [dislikeCount, setDislikeCount] = useState(movie.dislike_count || 0); // Initialize dislike count
+  const [likeCount, setLikeCount] = useState(movie.like || 0); // Initialize like count
+  const [dislikeCount, setDislikeCount] = useState(movie.dislike || 0); // Initialize dislike count
   const playerRef = useRef(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
@@ -45,64 +45,24 @@ const MovieDetails = ({ movie, data, darkMode }) => {
     setDropdownVisible(!dropdownVisible);
   };
 
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.code === "Space") {
-        event.preventDefault();
-        setPlaying((prevPlaying) => !prevPlaying);
-      } else if (event.code === "ArrowRight") {
-        handleSeekForward();
-      } else if (event.code === "ArrowLeft") {
-        handleSeekBackward();
-      } else if (event.code === "KeyF") {
-        handleFullscreenToggle();
+  const handleQualityChange = (format) => {
+    const currentTime = playerRef.current.getCurrentTime();
+    setQuality(format);
+    setTimeout(() => {
+      if (playerRef.current) {
+        playerRef.current.seekTo(currentTime, "seconds");
       }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-
-  const handlePlayPause = () => {
-    setPlaying((prevPlaying) => !prevPlaying);
+    }, 100); // A short delay to ensure the player has switched the source
   };
 
-  const handleSeekForward = () => {
-    if (playerRef.current) {
-      playerRef.current.seek(
-        playerRef.current.getState().player.currentTime + 10
-      );
-    }
-  };
-
-  const handleSeekBackward = () => {
-    if (playerRef.current) {
-      playerRef.current.seek(
-        playerRef.current.getState().player.currentTime - 10
-      );
-    }
-  };
-
-  const handleFullscreenToggle = () => {
-    if (playerRef.current) {
-      const player = playerRef.current.getState().player;
-      if (player.isFullscreen) {
-        playerRef.current.toggleFullscreen();
-      } else {
-        playerRef.current.toggleFullscreen();
-      }
-    }
-  };
-
-  const handleDoubleClick = (event) => {
-    const { left, width } = event.target.getBoundingClientRect();
-    const clickPosition = event.clientX - left;
-    if (clickPosition < width / 2) {
-      handleSeekBackward();
-    } else {
-      handleSeekForward();
+  const fetchMovieInfo = async () => {
+    try {
+      const response = await axios.get(`/info/${movie.id}`);
+      const updatedMovie = response.data.result;
+      setLikeCount(updatedMovie.like);
+      setDislikeCount(updatedMovie.dislike);
+    } catch (error) {
+      console.error("Error fetching movie info:", error);
     }
   };
 
@@ -114,17 +74,29 @@ const MovieDetails = ({ movie, data, darkMode }) => {
         movie_id: movie.id,
         like_action: "like",
       })
-      .then(() => {
-        setLiked(true);
-        toast.success("Like bosdingiz!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-        if (disliked) setDisliked(false); // If disliked before, reset dislike
+      .then((response) => {
+        if (response.data.status === true) {
+          setLiked(true);
+          setDisliked(false);
+          fetchMovieInfo();
+          toast.success(response.data.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        } else {
+          toast.info(response.data.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        }
       })
       .catch((error) => {
         console.error("Error liking the movie:", error);
@@ -139,18 +111,29 @@ const MovieDetails = ({ movie, data, darkMode }) => {
         movie_id: movie.id,
         like_action: "dislike",
       })
-      .then(() => {
-        setDisliked(true);
-        toast.success("Dislike bosdingiz!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-
-        if (liked) setLiked(false); // If liked before, reset like
+      .then((response) => {
+        if (response.data.status === true) {
+          setDisliked(true);
+          setLiked(false);
+          fetchMovieInfo();
+          toast.success(response.data.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        } else {
+          toast.info(response.data.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        }
       })
       .catch((error) => {
         console.error("Error disliking the movie:", error);
@@ -166,33 +149,32 @@ const MovieDetails = ({ movie, data, darkMode }) => {
             alt="Movie Poster"
             className="w-100 h-auto mb-4 md:mb-0 md:mr-4"
           />
-          <div className="relative">
+          <div className="relative flex flex-col gap-2">
             <HashLink
               to={`/movies/${data.id}/#videoPlayer`}
-              className="flex justify-between text-sm text-center items-center gap-1 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-36 py-2 mt-2 text-white hover:text-gray-300"
+              className="flex justify-center items-center gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
             >
               Tomosha qilish
             </HashLink>
-            <div className="relative inline-block text-left">
-              <button
-                className="flex justify-between text-sm text-center items-center gap-1 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-36 py-2 mt-2 text-white hover:text-gray-300"
-                onClick={toggleDropdown}
-              >
-                <CiSaveDown2 />
-                <p>Yuklab olish</p>
-              </button>
+            <button
+              className="flex justify-center items-center gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
+              onClick={toggleDropdown}
+            >
+              <CiSaveDown2 />
+              <p>Yuklab olish</p>
+            </button>
+            <div className="relative">
               {dropdownVisible && (
                 <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                   <div className="py-1">
-                    {(data.f480 && (
+                    {data.f480 && (
                       <a
                         href={data.f480}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         480p
                       </a>
-                    )) ||
-                      ""}
+                    )}
                     {data.f720 && (
                       <a
                         href={data.f720}
@@ -252,7 +234,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
                 disabled={liked}
               >
                 <AiOutlineLike className="text-xl" />
-                {movie.like}
+                {likeCount}
               </button>
               <button
                 onClick={handleDislike}
@@ -262,7 +244,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
                 disabled={disliked}
               >
                 <AiOutlineDislike className="text-xl" />
-                {movie.dislike}
+                {dislikeCount}
               </button>
             </div>
           </div>
@@ -274,10 +256,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
           id="videoPlayer"
         >
           <div
-            className={`relative max-w-full mx-auto mt-4 rounded-lg overflow-hidden shadow-lg  ${
-              playing ? "" : "cursor-pointer"
-            }`}
-            onDoubleClick={handleDoubleClick} // Handle double-click
+            className={`relative max-w-full w-[75%] mx-auto mt-4 rounded-lg overflow-hidden shadow-lg `}
           >
             <Player
               ref={playerRef}
@@ -288,28 +267,46 @@ const MovieDetails = ({ movie, data, darkMode }) => {
               onPlay={() => setPlaying(true)}
               onPause={() => setPlaying(false)}
               onEnded={() => setPlaying(false)}
-              onTimeUpdate={(e) => setPlayed(e.target.currentTime)}
               onWaiting={() => setPlaying(false)}
+              onTimeUpdate={(e) => setPlayed(e.target.currentTime)}
               onPlaying={() => setPlaying(true)}
             >
-              <BigPlayButton position="center" />
+              <BigPlayButton position="center" className="rounded-full" />
               <LoadingSpinner />
               <ControlBar autoHide={true} className="my-class px-2">
-                <button
-                  onClick={() => {
-                    if (document.pictureInPictureElement) {
-                      document.exitPictureInPicture();
-                    } else {
-                      playerRef.current.video.video.requestPictureInPicture();
-                    }
-                  }}
-                  className="icon-control"
-                >
-                  <MdPictureInPicture className="text-xl" />
-                </button>
                 <ReplayControl seconds={10} order={1.1} />
                 <ForwardControl seconds={10} order={1.2} />
-                <VolumeMenuButton vertical />
+                <VolumeMenuButton />
+
+                <div className="flex items-center">
+                  <button
+                    onClick={() => {
+                      if (document.pictureInPictureElement) {
+                        document.exitPictureInPicture();
+                      } else {
+                        playerRef.current.video.video.requestPictureInPicture();
+                      }
+                    }}
+                    className="icon-control ml-2"
+                  >
+                    <MdPictureInPicture className="text-xl" />
+                  </button>
+                  <select
+                    value={quality}
+                    onChange={(e) => handleQualityChange(e.target.value)}
+                    className="bg-transparent text-white rounded-lg p-[0.5px] ml-2"
+                  >
+                    {Object.keys({
+                      ...(data.f480 && { "480px": data.f480 }),
+                      ...(data.f720 && { "720px": data.f720 }),
+                      ...(data.f1080 && { "1080px": data.f1080 }),
+                    }).map((format) => (
+                      <option key={format} value={format}>
+                        {format}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 <PlaybackRateMenuButton rates={[2, 1.5, 1.25, 1, 0.5]} />
               </ControlBar>
             </Player>

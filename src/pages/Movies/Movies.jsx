@@ -23,6 +23,16 @@ const MoviePage = () => {
   const [error, setError] = useState("");
   const [data, setData] = useState("");
 
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get(`/comments/${id}`);
+      setComments(response.data.comments);
+    } catch (error) {
+      console.error("Failed to fetch comments", error);
+      setError("Failed to fetch comments");
+    }
+  };
+
   useEffect(() => {
     // Fetch movie details from the API
     axios
@@ -85,6 +95,7 @@ const MoviePage = () => {
             comments={comments}
             movieId={data.id}
             darkMode={darkMode}
+            fetchComments={fetchComments}
           />
           <SimilarMovies similarMovies={similarMovies} darkMode={darkMode} />
         </div>

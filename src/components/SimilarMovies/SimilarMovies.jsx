@@ -40,7 +40,7 @@ const SimilarMovies = ({ similarMovies, darkMode }) => {
                 : `/`
             }
             key={index}
-            className="w-1/2 md:w-1/4 lg:w-1/5 p-2"
+            className="w-1/1 md:w-1/4 lg:w-1/5 p-2"
           >
             <div className="relative">
               <img
