@@ -29,9 +29,6 @@ import {
   ForwardControl,
 } from "video-react";
 import "video-react/dist/video-react.css"; // import css
-import io from "socket.io-client"; // Socket.IO client
-
-const socket = io("http://localhost:5000"); // Socket server URL, o'zgartiring
 
 const MovieDetails = ({ movie, data, darkMode }) => {
   const [playing, setPlaying] = useState(false);
@@ -67,28 +64,6 @@ const MovieDetails = ({ movie, data, darkMode }) => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-
-  useEffect(() => {
-    // Listen for like and dislike events
-    socket.on("like", (updatedMovie) => {
-      if (updatedMovie.id === movie.id) {
-        setLikeCount(updatedMovie.like_count);
-        setDislikeCount(updatedMovie.dislike_count);
-      }
-    });
-
-    socket.on("dislike", (updatedMovie) => {
-      if (updatedMovie.id === movie.id) {
-        setLikeCount(updatedMovie.like_count);
-        setDislikeCount(updatedMovie.dislike_count);
-      }
-    });
-
-    return () => {
-      socket.off("like");
-      socket.off("dislike");
-    };
-  }, [movie.id]);
 
   const handlePlayPause = () => {
     setPlaying((prevPlaying) => !prevPlaying);
@@ -150,7 +125,6 @@ const MovieDetails = ({ movie, data, darkMode }) => {
           draggable: true,
         });
         if (disliked) setDisliked(false); // If disliked before, reset dislike
-        socket.emit("like", { movie_id: movie.id }); // Emit like event
       })
       .catch((error) => {
         console.error("Error liking the movie:", error);
@@ -177,7 +151,6 @@ const MovieDetails = ({ movie, data, darkMode }) => {
         });
 
         if (liked) setLiked(false); // If liked before, reset like
-        socket.emit("dislike", { movie_id: movie.id }); // Emit dislike event
       })
       .catch((error) => {
         console.error("Error disliking the movie:", error);
@@ -279,7 +252,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
                 disabled={liked}
               >
                 <AiOutlineLike className="text-xl" />
-                {likeCount}
+                {movie.like}
               </button>
               <button
                 onClick={handleDislike}
@@ -289,7 +262,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
                 disabled={disliked}
               >
                 <AiOutlineDislike className="text-xl" />
-                {dislikeCount}
+                {movie.dislike}
               </button>
             </div>
           </div>
@@ -342,12 +315,22 @@ const MovieDetails = ({ movie, data, darkMode }) => {
             </Player>
           </div>
         </div>
+      ) : data.additional_player ? (
+        <div className="w-full flex justify-center mt-4">
+          <iframe
+            src={data.additional_player}
+            frameBorder="0"
+            allowFullScreen
+            width="875px"
+            height="575px"
+            className=""
+            title={movie.title || "No Title"}
+          />
+        </div>
       ) : (
-        <div className="text-center py-10">
-          <h2 className="text-2xl font-semibold">
-            Bu film hozircha mavjud emas
-          </h2>
-          <p className="mt-4">Iltimos, keyinroq qayta urinib ko‘ring.</p>
+        <div className="flex mx-auto">
+          {" "}
+          <h3 className="text-center text-2xl">Kino dublyaj jarayonida...</h3>
         </div>
       )}
     </>
