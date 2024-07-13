@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import CommentsSection from "../../components/Comments/Comments";
 import SimilarMovies from "../../components/SimilarMovies/SimilarMovies";
@@ -8,9 +8,10 @@ import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import MovieDetails from "../../components/MovieDetails/MovieDetail";
 import Loading from "../../components/Loading/Loading";
+import NotFound from "../NotFound/NotFound";
 
 const MoviePage = () => {
-  const { id } = useParams();
+  const { title } = useParams();
   const [darkMode, setDarkMode] = useState(() => {
     const savedDarkMode = localStorage.getItem("darkMode");
     return savedDarkMode ? JSON.parse(savedDarkMode) : false;
@@ -21,11 +22,13 @@ const MoviePage = () => {
   const [similarMovies, setSimilarMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [data, setData] = useState("");
+  const [vidData, setVidData] = useState(null);
 
-  const fetchComments = async () => {
+  const navigate = useNavigate();
+
+  const fetchComments = async (movieId) => {
     try {
-      const response = await axios.get(`/comments/${id}`);
+      const response = await axios.get(`/comments/${movieId}`);
       setComments(response.data.comments);
     } catch (error) {
       console.error("Failed to fetch comments", error);
@@ -34,13 +37,44 @@ const MoviePage = () => {
   };
 
   useEffect(() => {
-    // Fetch movie details from the API
+    const extractTitle = () => {
+      const url = window.location.href;
+      const moviePath = url.split("/movies/")[1];
+      const seriesPath = url.split("/series/")[1];
+      const path = moviePath || seriesPath;
+      if (path) {
+        const [extractedTitle] = path.split("/");
+        return extractedTitle ? decodeURIComponent(extractedTitle) : "";
+      }
+      return "";
+    };
+
+    const decodedTitle = extractTitle();
+
+    if (!decodedTitle) {
+      setError("Invalid URL");
+      setLoading(false);
+      return navigate("/notfound");
+    }
+
+    console.log(decodedTitle, "Decoded Title");
     axios
-      .get(`/movie/${id}`)
+      .get(`/search/?name=${decodedTitle}`)
+      .then((response) => {
+        console.log(response, "res");
+        if (response.data.results.length === 0) {
+          throw new Error("Movie not found");
+        }
+        const movieId = response.data.results[0].id; // Assuming the first result is the desired movie
+        console.log(movieId, "Movie Id");
+        return axios.get(`/movie/${movieId}`);
+      })
+
       .then((response) => {
         setMovieData(response.data.info);
+        setVidData(response.data.result);
+        console.log(vidData, "VIDDD");
         setComments(response.data.comments);
-        setData(response.data.result);
         // Get all genres from the movie data
         const genres = response.data.info.genre;
         // Fetch similar movies for each genre
@@ -63,12 +97,12 @@ const MoviePage = () => {
       })
       .catch((error) => {
         console.error("Failed to fetch data", error);
-        setError("Failed to fetch data");
+        setError(error.message || "Failed to fetch data");
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [id]);
+  }, [title]);
 
   useEffect(() => {
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
@@ -79,7 +113,7 @@ const MoviePage = () => {
   };
 
   if (loading) return <Loading />;
-  // if (error) return <div>{error}</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <>
@@ -90,12 +124,13 @@ const MoviePage = () => {
         }`}
       >
         <div className="container mx-auto p-4">
-          <MovieDetails movie={movieData} data={data} darkMode={darkMode} />
+          <MovieDetails movie={movieData} darkMode={darkMode} />
           <CommentsSection
             comments={comments}
-            movieId={data.id}
+            movieId={movieData?.id}
+            vidData={vidData}
             darkMode={darkMode}
-            fetchComments={fetchComments}
+            fetchComments={() => fetchComments(movieData?.id)}
           />
           <SimilarMovies similarMovies={similarMovies} darkMode={darkMode} />
         </div>

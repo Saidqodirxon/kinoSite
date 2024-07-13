@@ -30,7 +30,7 @@ import {
 } from "video-react";
 import "video-react/dist/video-react.css"; // import css
 
-const MovieDetails = ({ movie, data, darkMode }) => {
+const MovieDetails = ({ movie, vidData, darkMode }) => {
   const [playing, setPlaying] = useState(false);
   const [played, setPlayed] = useState(0);
   const [quality, setQuality] = useState("");
@@ -44,6 +44,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
+  console.log(vidData, "VidData");
 
   const handleQualityChange = (format) => {
     const currentTime = playerRef.current.getCurrentTime();
@@ -58,7 +59,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
   const fetchMovieInfo = async () => {
     try {
       const response = await axios.get(`/info/${movie.id}`);
-      const updatedMovie = response.data.result;
+      const updatedMovie = response.vidDresult;
       setLikeCount(updatedMovie.like);
       setDislikeCount(updatedMovie.dislike);
     } catch (error) {
@@ -151,7 +152,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
           />
           <div className="relative flex flex-col gap-2">
             <HashLink
-              to={`/movies/${data.id}/#videoPlayer`}
+              to={`/movies/${movie.id}/#videoPlayer`}
               className="flex justify-center items-center gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
             >
               Tomosha qilish
@@ -167,26 +168,26 @@ const MovieDetails = ({ movie, data, darkMode }) => {
               {dropdownVisible && (
                 <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                   <div className="py-1">
-                    {data.f480 && (
+                    {vidData.f480 && (
                       <a
-                        href={data.f480}
+                        href={vidData.f480}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         480p
                       </a>
                     )}
-                    {data.f720 && (
+                    {vidData.f720 && (
                       <a
-                        href={data.f720}
+                        href={vidData.f720}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         720p
                       </a>
                     )}
-                    {data.f1080 && (
+                    {vidData.f1080 && (
                       <a
-                        href={data.f1080}
-                        download={`${data.name}.mp4`}
+                        href={vidData.f1080}
+                        download={`${vidData.name}.mp4`}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         1080p
@@ -250,19 +251,19 @@ const MovieDetails = ({ movie, data, darkMode }) => {
           </div>
         </div>
       </div>
-      {data.f480 || data.f720 || data.f1080 ? (
+      {vidData?.f480 || vidData?.f720 || vidData?.f1080 ? (
         <div
           className="relative max-w-full mx-auto rounded-lg overflow-hidden shadow-lg mt-20"
           id="videoPlayer"
         >
           <div
-            className={`relative max-w-full w-[75%] mx-auto mt-4 rounded-lg overflow-hidden shadow-lg `}
+            className={`relative max-w-full mx-auto mt-4 rounded-lg overflow-hidden shadow-lg `}
           >
             <Player
               ref={playerRef}
               playsInline
               poster="/big_banner.png"
-              src={data.f1080 || data.f720 || data.f480}
+              src={vidData.f1080 || vidData.f720 || vidData.f480}
               autoPlay={playing}
               onPlay={() => setPlaying(true)}
               onPause={() => setPlaying(false)}
@@ -278,7 +279,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
                 <ForwardControl seconds={10} order={1.2} />
                 <VolumeMenuButton />
 
-                <div className="flex items-center">
+                <div className="flex items-center ">
                   <button
                     onClick={() => {
                       if (document.pictureInPictureElement) {
@@ -287,7 +288,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
                         playerRef.current.video.video.requestPictureInPicture();
                       }
                     }}
-                    className="icon-control ml-2"
+                    className="icon-control ml-2 sm:hidden"
                   >
                     <MdPictureInPicture className="text-xl" />
                   </button>
@@ -297,9 +298,9 @@ const MovieDetails = ({ movie, data, darkMode }) => {
                     className="bg-transparent text-white rounded-lg p-[0.5px] ml-2"
                   >
                     {Object.keys({
-                      ...(data.f480 && { "480px": data.f480 }),
-                      ...(data.f720 && { "720px": data.f720 }),
-                      ...(data.f1080 && { "1080px": data.f1080 }),
+                      ...(vidData.f480 && { "480px": vidData.f480 }),
+                      ...(vidData.f720 && { "720px": vidData.f720 }),
+                      ...(vidData.f1080 && { "1080px": vidData.f1080 }),
                     }).map((format) => (
                       <option key={format} value={format}>
                         {format}
@@ -312,10 +313,10 @@ const MovieDetails = ({ movie, data, darkMode }) => {
             </Player>
           </div>
         </div>
-      ) : data.additional_player ? (
+      ) : vidData?.additional_player ? (
         <div className="w-full flex justify-center mt-4">
           <iframe
-            src={data.additional_player}
+            src={vidData?.additional_player}
             frameBorder="0"
             allowFullScreen
             width="875px"
@@ -326,7 +327,6 @@ const MovieDetails = ({ movie, data, darkMode }) => {
         </div>
       ) : (
         <div className="flex mx-auto">
-          {" "}
           <h3 className="text-center text-2xl">Kino dublyaj jarayonida...</h3>
         </div>
       )}

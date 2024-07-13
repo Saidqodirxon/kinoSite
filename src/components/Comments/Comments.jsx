@@ -49,11 +49,11 @@ const CommentsSection = ({ comments, movieId, darkMode, fetchComments }) => {
     }
   };
 
-  useEffect(() => {
-    if (commentSectionRef.current) {
-      commentSectionRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [comments]);
+  // useEffect(() => {
+  //   if (commentSectionRef.current) {
+  //     commentSectionRef.current.scrollIntoView({ behavior: "smooth" });
+  //   }
+  // }, [comments]);
 
   return (
     <div className="mt-32 p-4" id="izoh">
