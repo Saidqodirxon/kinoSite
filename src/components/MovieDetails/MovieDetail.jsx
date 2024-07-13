@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState, useRef, useEffect } from "react";
-import ReactPlayer from "react-player";
+import React, { useState, useEffect, useRef } from "react";
 import {
   FaPlay,
   FaPause,
@@ -16,20 +15,25 @@ import { CiSaveDown2 } from "react-icons/ci";
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa";
 import { MdPictureInPicture } from "react-icons/md";
-import { HashLink, HashLink as Link } from "react-router-hash-link";
+import { HashLink } from "react-router-hash-link";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {
+  Player,
+  BigPlayButton,
+  LoadingSpinner,
+  ControlBar,
+  VolumeMenuButton,
+  PlaybackRateMenuButton,
+  ReplayControl,
+  ForwardControl,
+} from "video-react";
+import "video-react/dist/video-react.css"; // import css
 
 const MovieDetails = ({ movie, data, darkMode }) => {
   const [playing, setPlaying] = useState(false);
   const [played, setPlayed] = useState(0);
-  const [playbackRate, setPlaybackRate] = useState(1);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [volume, setVolume] = useState(0.8);
-  const [muted, setMuted] = useState(false);
   const [quality, setQuality] = useState("");
-  const [isPiP, setIsPiP] = useState(false);
-  const [seekInterval, setSeekInterval] = useState(null);
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const playerRef = useRef(null);
@@ -39,12 +43,6 @@ const MovieDetails = ({ movie, data, darkMode }) => {
     setDropdownVisible(!dropdownVisible);
   };
 
-  // useEffect(() => {
-  //   if (movie.videoUrl && Object.keys(movie.videoUrl).length > 0) {
-  //     setQuality(Object.keys(movie.videoUrl)[0]);
-  //   }
-  // }, [movie.videoUrl]);
-
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.code === "Space") {
@@ -52,29 +50,18 @@ const MovieDetails = ({ movie, data, darkMode }) => {
         setPlaying((prevPlaying) => !prevPlaying);
       } else if (event.code === "ArrowRight") {
         handleSeekForward();
-        setSeekInterval(setInterval(handleSeekForward, 1000));
       } else if (event.code === "ArrowLeft") {
         handleSeekBackward();
-        setSeekInterval(setInterval(handleSeekBackward, 1000));
       } else if (event.code === "KeyF") {
         handleFullscreenToggle();
       }
     };
 
-    const handleKeyUp = (event) => {
-      if (event.code === "ArrowRight" || event.code === "ArrowLeft") {
-        clearInterval(seekInterval);
-        setSeekInterval(null);
-      }
-    };
-
     document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("keyup", handleKeyUp);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("keyup", handleKeyUp);
     };
-  }, [seekInterval]);
+  }, []);
 
   const handlePlayPause = () => {
     setPlaying((prevPlaying) => !prevPlaying);
@@ -82,78 +69,29 @@ const MovieDetails = ({ movie, data, darkMode }) => {
 
   const handleSeekForward = () => {
     if (playerRef.current) {
-      playerRef.current.seekTo(
-        played + 10 / playerRef.current.getDuration(),
-        "fraction"
+      playerRef.current.seek(
+        playerRef.current.getState().player.currentTime + 10
       );
     }
   };
 
   const handleSeekBackward = () => {
     if (playerRef.current) {
-      playerRef.current.seekTo(
-        played - 10 / playerRef.current.getDuration(),
-        "fraction"
+      playerRef.current.seek(
+        playerRef.current.getState().player.currentTime - 10
       );
     }
   };
 
-  const handlePlaybackRateChange = (rate) => {
-    setPlaybackRate(rate);
-  };
-
   const handleFullscreenToggle = () => {
     if (playerRef.current) {
-      if (!document.fullscreenElement) {
-        playerRef.current.wrapper.requestFullscreen();
+      const player = playerRef.current.getState().player;
+      if (player.isFullscreen) {
+        playerRef.current.toggleFullscreen();
       } else {
-        document.exitFullscreen();
+        playerRef.current.toggleFullscreen();
       }
-      setIsFullscreen((prevFullscreen) => !prevFullscreen);
     }
-  };
-
-  const handlePiPToggle = () => {
-    if (document.pictureInPictureElement) {
-      document.exitPictureInPicture();
-      setIsPiP(false);
-    } else if (playerRef.current) {
-      playerRef.current
-        .getInternalPlayer()
-        .requestPictureInPicture()
-        .then(() => {
-          setIsPiP(true);
-        });
-    }
-  };
-
-  const handleProgress = (state) => {
-    setPlayed(state.played);
-  };
-
-  const handleVolumeChange = (e) => {
-    setVolume(parseFloat(e.target.value));
-    setMuted(e.target.value === "0");
-  };
-
-  const handleMuteToggle = () => {
-    setMuted((prevMuted) => !prevMuted);
-  };
-
-  const handleQualityChange = (format) => {
-    const currentTime = playerRef.current.getCurrentTime();
-    setQuality(format);
-    setTimeout(() => {
-      if (playerRef.current) {
-        playerRef.current.seekTo(currentTime, "seconds");
-      }
-    }, 100); // A short delay to ensure the player has switched the source
-  };
-
-  const formatTime = (seconds) => {
-    const date = new Date(0);
-    date.setSeconds(seconds);
-    return date.toISOString().substr(11, 8);
   };
 
   const handleDoubleClick = (event) => {
@@ -165,6 +103,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
       handleSeekForward();
     }
   };
+
   const handleLike = () => {
     // If already liked, do nothing
     if (liked) return;
@@ -202,7 +141,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
       })
       .then(() => {
         setDisliked(true);
-        // react-toastify succes
+        // react-toastify success
         toast.success("Dislike bosdingiz!", {
           position: "top-right",
           autoClose: 5000,
@@ -246,7 +185,6 @@ const MovieDetails = ({ movie, data, darkMode }) => {
               {dropdownVisible && (
                 <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                   <div className="py-1">
-                    {/* <h2>SSSS</h2> */}
                     {(data.f480 && (
                       <a
                         href={data.f480}
@@ -267,6 +205,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
                     {data.f1080 && (
                       <a
                         href={data.f1080}
+                        download={`${data.name}.mp4`}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         1080p
@@ -281,16 +220,13 @@ const MovieDetails = ({ movie, data, darkMode }) => {
 
         <div className="flex gap-4">
           <div className="mt-10 leading-6">
-            <h1 className="text-4xl font-bold  my-2">{movie.name || ""}</h1>
+            <h1 className="text-4xl font-bold my-2">{movie.name || ""}</h1>
             <p className="mt-2">{movie.description || ""}</p>
             <ul className="mt-4">
               <li>
                 <strong>Janr:</strong>{" "}
                 {movie.genre ? movie.genre.join(", ") : ""}
               </li>
-              {/* <li>
-              <strong>Davomiyligi:</strong> {movie.duration || "No Duration"}
-            </li> */}
               <li>
                 <strong>Chiqqan yili:</strong> {movie.year || ""}
               </li>
@@ -299,7 +235,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
               </li>
               <li>
                 <strong>Chiqarilgan davlat:</strong> {movie.state || ""}
-              </li>{" "}
+              </li>
               <li>
                 <strong>Yosh chegarasi:</strong> {`${movie.age}+` || ""}
               </li>
@@ -323,9 +259,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
             onDoubleClick={handleDoubleClick}
           >
             {!playing && played === 0 && (
-              // <div className="absolute inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50">
-              <div className="flex items-center justify-center bg-black bg-opacity-50 inset-0  absolute">
-                {" "}
+              <div className="flex items-center justify-center bg-black bg-opacity-50 inset-0 absolute">
                 <img
                   src={"/big_banner.png"}
                   alt="Movie Poster"
@@ -333,198 +267,42 @@ const MovieDetails = ({ movie, data, darkMode }) => {
                 />
                 <button
                   onClick={handlePlayPause}
-                  className="text-white text-4xl bg-red-600 p-4 rounded-full animate-pulse"
+                  className="absolute p-4 bg-transparent border-none"
                 >
-                  <FaPlay />
+                  <FaPlay className="text-white text-6xl opacity-75 hover:opacity-100" />
                 </button>
               </div>
-              // </div>
             )}
-            <ReactPlayer
+            <Player
               ref={playerRef}
-              url={
-                data.f480
-                  ? data.f480
-                  : data.f720
-                  ? data.f720
-                  : data.f1080
-                  ? data.f1080
-                  : data.f480
-              }
-              playing={playing}
-              volume={volume}
-              muted={muted}
-              playbackRate={playbackRate}
-              onProgress={handleProgress}
-              width="100%"
-              height="100%"
-              controls={false}
-              className="video-player"
-            />
-            {!playing && played !== 0 && (
-              <div className="absolute inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50">
-                <button
-                  onClick={handlePlayPause}
-                  className="text-white text-4xl bg-red-600 p-4 rounded-full"
-                >
-                  <FaPause />
-                </button>
-              </div>
-            )}
+              playsInline
+              poster="/big_banner.png"
+              src={data.f1080 || data.f720 || data.f480}
+              autoPlay={playing}
+              onPlay={() => setPlaying(true)}
+              onPause={() => setPlaying(false)}
+              onEnded={() => setPlaying(false)}
+              onTimeUpdate={(e) => setPlayed(e.target.currentTime)}
+              onWaiting={() => setPlaying(false)}
+              onPlaying={() => setPlaying(true)}
+            >
+              <BigPlayButton position="center" />
+              <LoadingSpinner />
+              <ControlBar autoHide={true} className="my-class">
+                <ReplayControl seconds={10} order={1.1} />
+                <ForwardControl seconds={10} order={1.2} />
+                <VolumeMenuButton vertical />
+                <PlaybackRateMenuButton rates={[2, 1.5, 1.25, 1, 0.5]} />
+              </ControlBar>
+            </Player>
           </div>
-
-          {/* Video Controls */}
-          <div className="absolute bottom-0 left-0 right-0 bg-[rgba(15,21,45,1)] bg-opacity-100 flex flex-col justify-between items-center p-2">
-            <div className="w-full mb-2">
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step="any"
-                value={played}
-                onChange={(e) =>
-                  playerRef.current &&
-                  playerRef.current.seekTo(parseFloat(e.target.value))
-                }
-                className="mx-2 w-full h-2 appearance-none bg-gray-600 rounded-full"
-                style={{
-                  background: `linear-gradient(to right, red ${
-                    played * 100
-                  }%, white ${played * 100}%, gray ${played * 100}%)`,
-                }}
-              />
-            </div>
-            <div className="flex justify-start w-full items-center mb-2">
-              <div className="flex space-x-2">
-                <button
-                  onClick={handleSeekBackward}
-                  className="text-white hover:text-gray-300"
-                >
-                  <RiReplay10Fill />
-                </button>
-                <button
-                  onClick={handlePlayPause}
-                  className="text-white hover:text-gray-300"
-                >
-                  {playing ? <FaPause /> : <FaPlay />}
-                </button>
-                <button
-                  onClick={handleSeekForward}
-                  className="text-white hover:text-gray-300"
-                >
-                  <RiForward10Fill />
-                </button>
-
-                <div className="relative flex items-center space-x-2 text-white group">
-                  <button
-                    onClick={handleMuteToggle}
-                    className="hover:text-gray-300"
-                  >
-                    {muted ? <FaVolumeMute /> : <FaVolumeUp />}
-                  </button>
-                  <input
-                    type="range"
-                    min={0}
-                    max={1}
-                    step="any"
-                    value={volume}
-                    onChange={handleVolumeChange}
-                    className="absolute left-5 -top opacity-0 group-hover:opacity-100 transition-opacity"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-center mx-52 items-center text-white gap-2">
-                <span>
-                  {formatTime(
-                    playerRef.current
-                      ? played * playerRef.current.getDuration()
-                      : 0
-                  )}
-                </span>
-                /
-                <span>
-                  {formatTime(
-                    playerRef.current ? playerRef.current.getDuration() : 0
-                  )}
-                </span>
-              </div>
-
-              <div className="flex justify-end w-full gap-2 items-center">
-                <select
-                  value={quality}
-                  onChange={(e) => handleQualityChange(e.target.value)}
-                  className="bg-gray-800 text-white rounded-lg p-[0.5px]"
-                >
-                  {Object.keys({
-                    ...(data.f480 && { "480px": data.f480 }),
-                    ...(data.f720 && { "720px": data.f720 }),
-                    ...(data.f1080 && { "1080px": data.f1080 }),
-                  }).map((format) => (
-                    <option key={format} value={format}>
-                      {format}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  value={playbackRate}
-                  onChange={(e) =>
-                    handlePlaybackRateChange(parseFloat(e.target.value))
-                  }
-                  className="bg-gray-800 text-white rounded-lg p-[0.5px]"
-                >
-                  {[0.5, 1, 1.5, 2].map((rate) => (
-                    <option key={rate} value={rate}>
-                      {rate}x
-                    </option>
-                  ))}
-                </select>
-                <button
-                  onClick={handlePiPToggle}
-                  className="text-white hover:text-gray-300"
-                >
-                  <MdPictureInPicture />
-                </button>
-                <button
-                  onClick={handleFullscreenToggle}
-                  className="text-white hover:text-gray-300"
-                >
-                  {isFullscreen ? <FaCompress /> : <FaExpand />}
-                </button>
-              </div>
-            </div>
-            <div className="flex justify-end w-full items-center">
-              <div className="flex space-x-2">
-                <div className="flex justify-between text-sm gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-3 py-1">
-                  <button className="text-white hover:text-gray-300 flex justify-between items-center gap-1">
-                    {movie.like} <AiOutlineLike onClick={handleLike} />
-                  </button>
-                  |
-                  <button className="text-white hover:text-gray-300 flex justify-between items-center gap-1">
-                    <AiOutlineDislike onClick={handleDislike} /> {movie.dislike}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : data.additional_player ? (
-        <div className="w-full flex justify-center mt-4">
-          <iframe
-            src={data.additional_player}
-            frameBorder="0"
-            allowFullScreen
-            width="875px"
-            height="575px"
-            className=""
-            title={movie.title || "No Title"}
-          />
         </div>
       ) : (
-        <div className="flex mx-auto">
-          {" "}
-          <h3 className="text-center text-2xl">Kino dublyaj jarayonida...</h3>
+        <div className="text-center py-10">
+          <h2 className="text-2xl font-semibold">
+            Bu film hozircha mavjud emas
+          </h2>
+          <p className="mt-4">Iltimos, keyinroq qayta urinib ko‘ring.</p>
         </div>
       )}
     </>
