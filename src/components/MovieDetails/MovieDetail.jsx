@@ -29,6 +29,9 @@ import {
   ForwardControl,
 } from "video-react";
 import "video-react/dist/video-react.css"; // import css
+import io from "socket.io-client"; // Socket.IO client
+
+const socket = io("http://localhost:5000"); // Socket server URL, o'zgartiring
 
 const MovieDetails = ({ movie, data, darkMode }) => {
   const [playing, setPlaying] = useState(false);
@@ -36,6 +39,8 @@ const MovieDetails = ({ movie, data, darkMode }) => {
   const [quality, setQuality] = useState("");
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
+  const [likeCount, setLikeCount] = useState(movie.like_count || 0); // Initialize like count
+  const [dislikeCount, setDislikeCount] = useState(movie.dislike_count || 0); // Initialize dislike count
   const playerRef = useRef(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
@@ -62,6 +67,28 @@ const MovieDetails = ({ movie, data, darkMode }) => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
+  useEffect(() => {
+    // Listen for like and dislike events
+    socket.on("like", (updatedMovie) => {
+      if (updatedMovie.id === movie.id) {
+        setLikeCount(updatedMovie.like_count);
+        setDislikeCount(updatedMovie.dislike_count);
+      }
+    });
+
+    socket.on("dislike", (updatedMovie) => {
+      if (updatedMovie.id === movie.id) {
+        setLikeCount(updatedMovie.like_count);
+        setDislikeCount(updatedMovie.dislike_count);
+      }
+    });
+
+    return () => {
+      socket.off("like");
+      socket.off("dislike");
+    };
+  }, [movie.id]);
 
   const handlePlayPause = () => {
     setPlaying((prevPlaying) => !prevPlaying);
@@ -105,7 +132,6 @@ const MovieDetails = ({ movie, data, darkMode }) => {
   };
 
   const handleLike = () => {
-    // If already liked, do nothing
     if (liked) return;
 
     axios
@@ -124,6 +150,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
           draggable: true,
         });
         if (disliked) setDisliked(false); // If disliked before, reset dislike
+        socket.emit("like", { movie_id: movie.id }); // Emit like event
       })
       .catch((error) => {
         console.error("Error liking the movie:", error);
@@ -131,7 +158,6 @@ const MovieDetails = ({ movie, data, darkMode }) => {
   };
 
   const handleDislike = () => {
-    // If already disliked, do nothing
     if (disliked) return;
 
     axios
@@ -141,7 +167,6 @@ const MovieDetails = ({ movie, data, darkMode }) => {
       })
       .then(() => {
         setDisliked(true);
-        // react-toastify success
         toast.success("Dislike bosdingiz!", {
           position: "top-right",
           autoClose: 5000,
@@ -152,6 +177,7 @@ const MovieDetails = ({ movie, data, darkMode }) => {
         });
 
         if (liked) setLiked(false); // If liked before, reset like
+        socket.emit("dislike", { movie_id: movie.id }); // Emit dislike event
       })
       .catch((error) => {
         console.error("Error disliking the movie:", error);
@@ -244,6 +270,28 @@ const MovieDetails = ({ movie, data, darkMode }) => {
                 <h2 className="leading-7">{movie.info}</h2>
               </li>
             </ul>
+            <div className="flex gap-4 mt-4">
+              <button
+                onClick={handleLike}
+                className={`flex items-center gap-2 p-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 ${
+                  liked ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={liked}
+              >
+                <AiOutlineLike className="text-xl" />
+                {likeCount}
+              </button>
+              <button
+                onClick={handleDislike}
+                className={`flex items-center gap-2 p-2 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 ${
+                  disliked ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={disliked}
+              >
+                <AiOutlineDislike className="text-xl" />
+                {dislikeCount}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -256,23 +304,8 @@ const MovieDetails = ({ movie, data, darkMode }) => {
             className={`relative max-w-full mx-auto mt-4 rounded-lg overflow-hidden shadow-lg  ${
               playing ? "" : "cursor-pointer"
             }`}
-            onDoubleClick={handleDoubleClick}
+            onDoubleClick={handleDoubleClick} // Handle double-click
           >
-            {!playing && played === 0 && (
-              <div className="flex items-center justify-center bg-black bg-opacity-50 inset-0 absolute">
-                <img
-                  src={"/big_banner.png"}
-                  alt="Movie Poster"
-                  className="absolute inset-0 w-full h-full object-fill "
-                />
-                <button
-                  onClick={handlePlayPause}
-                  className="absolute p-4 bg-transparent border-none"
-                >
-                  <FaPlay className="text-white text-6xl opacity-75 hover:opacity-100" />
-                </button>
-              </div>
-            )}
             <Player
               ref={playerRef}
               playsInline
@@ -288,7 +321,19 @@ const MovieDetails = ({ movie, data, darkMode }) => {
             >
               <BigPlayButton position="center" />
               <LoadingSpinner />
-              <ControlBar autoHide={true} className="my-class">
+              <ControlBar autoHide={true} className="my-class px-2">
+                <button
+                  onClick={() => {
+                    if (document.pictureInPictureElement) {
+                      document.exitPictureInPicture();
+                    } else {
+                      playerRef.current.video.video.requestPictureInPicture();
+                    }
+                  }}
+                  className="icon-control"
+                >
+                  <MdPictureInPicture className="text-xl" />
+                </button>
                 <ReplayControl seconds={10} order={1.1} />
                 <ForwardControl seconds={10} order={1.2} />
                 <VolumeMenuButton vertical />
