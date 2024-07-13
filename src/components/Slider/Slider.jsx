@@ -5,6 +5,7 @@ import Navbar from "../Navbar/Navbar";
 import { FaStar, FaCircle } from "react-icons/fa";
 import "./index.scss";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const delay = 5000;
 
@@ -146,10 +147,14 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
             </>
           ))}
         </div>
-
         <div
           className="slideshowDots"
-          style={{ position: "absolute", bottom: "2rem", left: "40%" }}
+          style={{
+            position: "absolute",
+            bottom: "2rem",
+            margin: "0",
+            // left: "22%",
+          }}
         >
           {slides.map((_, idx) => (
             <div
@@ -160,6 +165,38 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
               }}
             ></div>
           ))}
+        </div>
+
+        <div className="slide-title md:hidden absolute top-4 left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold">
+          <Link
+            to={`/movies/${slides[index]?.title}`}
+            className="playBtn flex justify-center items-center rounded-full animate-pulse bg-red-700 text-white w-[6rem] h-[6rem]"
+          >
+            <span className="triangle"></span>
+          </Link>
+          <div className="flex slide-mobile">
+            {" "}
+            {/* <span className="years-text">{slides[index]?.age}+</span> */}
+            <span className="rating">
+              <FaStar className="star-icon" />
+              {slides[index]?.like} <FaCircle className="dot-icon" />
+              {slides[index]?.year} <FaCircle className="dot-icon" />
+              {slides[index]?.type === "anime"
+                ? "Anime"
+                : slides[index]?.type === "movie"
+                ? "Kino"
+                : slides[index]?.type === "series"
+                ? "Serial"
+                : slides[index]?.type === "cartoon"
+                ? "Multfilm"
+                : slides[index]?.type === "cartoon/series"
+                ? "Multfilm"
+                : slides[index]?.type === "anime/series"
+                ? "Anime"
+                : ""}
+            </span>
+          </div>
+          <h2>{slides[index]?.title}</h2>
         </div>
       </div>
     </div>

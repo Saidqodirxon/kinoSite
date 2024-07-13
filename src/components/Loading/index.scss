@@ -50,12 +50,53 @@
   }
 }
 
+.slideshowDots {
+  left: 40%;
+}
 @media screen and (max-width: 768px) {
   #loader-container {
     max-width: 150px;
   }
   #loader {
     width: 150px;
+  }
+
+  .slide-overlay,
+  .playBtn {
+    display: none;
+  }
+
+  .slideshowDots {
+    left: 25%;
+    margin-top: -2rem;
+  }
+  .slide-title {
+    position: relative;
+
+    h2 {
+      // position: absolute;
+      width: 100%;
+      margin-top: 4vh;
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 2.5rem;
+      width: 100%;
+    }
+    .playBtn {
+      margin: 0 auto;
+      margin-top: 35vh;
+    }
+    .slide-mobile {
+      margin-top: 10vh;
+    }
+    .triangle {
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 30px solid white;
+      rotate: 90deg;
+    }
   }
 }
 
