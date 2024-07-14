@@ -41,10 +41,24 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
   const playerRef = useRef(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
+  const useScreenWidth = () => {
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+      const handleResize = () => setScreenWidth(window.innerWidth);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    return screenWidth;
+  };
+
+  const screenWidth = useScreenWidth();
+  const isMobile = screenWidth <= 768;
+
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
-  console.log(vidData, "VidData");
 
   const handleQualityChange = (format) => {
     const currentTime = playerRef.current.getCurrentTime();
@@ -263,7 +277,7 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
               ref={playerRef}
               playsInline
               poster="/big_banner.png"
-              src={vidData.f1080 || vidData.f720 || vidData.f480}
+              src={vidData[quality]}
               autoPlay={playing}
               onPlay={() => setPlaying(true)}
               onPause={() => setPlaying(false)}
@@ -274,28 +288,29 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
             >
               <BigPlayButton position="center" className="rounded-full" />
               <LoadingSpinner />
-              <ControlBar autoHide={true} className="my-class px-2">
+              <ControlBar autoHide={true} className="my-class md:px-2 lg:px-2">
                 <ReplayControl seconds={10} order={1.1} />
                 <ForwardControl seconds={10} order={1.2} />
-                <VolumeMenuButton />
-
-                <div className="flex items-center ">
-                  <button
-                    onClick={() => {
-                      if (document.pictureInPictureElement) {
-                        document.exitPictureInPicture();
-                      } else {
-                        playerRef.current.video.video.requestPictureInPicture();
-                      }
-                    }}
-                    className="icon-control ml-2 sm:hidden"
-                  >
-                    <MdPictureInPicture className="text-xl" />
-                  </button>
+                {!isMobile && <VolumeMenuButton vertical />}
+                <div className="flex items-center">
+                  {!isMobile && (
+                    <button
+                      onClick={() => {
+                        if (document.pictureInPictureElement) {
+                          document.exitPictureInPicture();
+                        } else {
+                          playerRef.current.video.video.requestPictureInPicture();
+                        }
+                      }}
+                      className="icon-control ml-2"
+                    >
+                      <MdPictureInPicture className="text-xl" />
+                    </button>
+                  )}
                   <select
                     value={quality}
                     onChange={(e) => handleQualityChange(e.target.value)}
-                    className="bg-transparent text-white rounded-lg p-[0.5px] ml-2"
+                    className="bg-transparent text-white rounded-lg p-[0.5px] lg:ml-2 md:ml-2"
                   >
                     {Object.keys({
                       ...(vidData.f480 && { "480px": vidData.f480 }),
@@ -308,7 +323,9 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                     ))}
                   </select>
                 </div>
-                <PlaybackRateMenuButton rates={[2, 1.5, 1.25, 1, 0.5]} />
+                {!isMobile && (
+                  <PlaybackRateMenuButton rates={[2, 1.5, 1.25, 1, 0.5]} />
+                )}
               </ControlBar>
             </Player>
           </div>

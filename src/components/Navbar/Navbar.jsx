@@ -94,7 +94,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
           </div>
           <div className="menu hidden md:flex">
             <div className=" flex items-baseline space-x-4 menu-item-box">
-              <Link to={"/movies/1"}>TEST</Link>
+              {/* <Link to={"/movies/1"}>TEST</Link> */}
               <Link to="/" className="menu-item">
                 Bosh sahifa
               </Link>

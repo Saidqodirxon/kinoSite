@@ -23,8 +23,8 @@ const SimilarMovies = ({ similarMovies, darkMode }) => {
       <h2 className="text-2xl font-bold">O'xshash kinolar</h2>
       <div className="flex flex-wrap mt-4">
         {similarMovies.map((movie, index) => (
-          <Link
-            to={
+          <a
+            href={
               movie.type === "movie"
                 ? `/movies/${movie.name}`
                 : movie.type === "anime"
@@ -63,7 +63,7 @@ const SimilarMovies = ({ similarMovies, darkMode }) => {
                 </div>
               </div>
             </div>
-          </Link>
+          </a>
         ))}
       </div>
     </div>

@@ -124,7 +124,11 @@ const MoviePage = () => {
         }`}
       >
         <div className="container mx-auto p-4">
-          <MovieDetails movie={movieData} darkMode={darkMode} />
+          <MovieDetails
+            movie={movieData}
+            vidData={vidData}
+            darkMode={darkMode}
+          />
           <CommentsSection
             comments={comments}
             movieId={movieData?.id}
