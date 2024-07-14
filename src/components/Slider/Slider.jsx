@@ -135,7 +135,12 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
                       }}
                     />
 
-                    <button className="watch-button">Tomosha qilish</button>
+                    <Link
+                      to={`/movies/${slides[index]?.title}`}
+                      className="watch-button"
+                    >
+                      Tomosha qilish
+                    </Link>
                   </div>
                 </div>
                 <img

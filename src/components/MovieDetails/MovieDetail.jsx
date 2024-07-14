@@ -277,7 +277,7 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
               ref={playerRef}
               playsInline
               poster="/big_banner.png"
-              src={vidData[quality]}
+              src={vidData.f1080 || vidData.f720 || vidData.f480}
               autoPlay={playing}
               onPlay={() => setPlaying(true)}
               onPause={() => setPlaying(false)}
@@ -286,12 +286,12 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
               onTimeUpdate={(e) => setPlayed(e.target.currentTime)}
               onPlaying={() => setPlaying(true)}
             >
-              <BigPlayButton position="center" className="rounded-full" />
+              <BigPlayButton position="center" />
               <LoadingSpinner />
               <ControlBar autoHide={true} className="my-class md:px-2 lg:px-2">
-                <ReplayControl seconds={10} order={1.1} />
-                <ForwardControl seconds={10} order={1.2} />
-                {!isMobile && <VolumeMenuButton vertical />}
+                {!isMobile && <ReplayControl seconds={10} order={1.1} />}
+                {!isMobile && <ForwardControl seconds={10} order={1.2} />}
+                {<VolumeMenuButton vertical />}
                 <div className="flex items-center">
                   {!isMobile && (
                     <button
