@@ -122,7 +122,7 @@ function Filters() {
               : ""}
             {selectedGenre} {selectedCountry} {selectedYear}
           </h2>
-          <div className="flex justify-between">
+          <div className="md:flex md:justify-between lg:flex lg:justify-between">
             <div className="mb-4 relative">
               <select
                 value={selectedType}

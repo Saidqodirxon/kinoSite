@@ -2,7 +2,14 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { FaMoon, FaSun, FaBars, FaTimes, FaAngleDown } from "react-icons/fa";
+import {
+  FaMoon,
+  FaSun,
+  FaBars,
+  FaTimes,
+  FaAngleDown,
+  FaAngleUp,
+} from "react-icons/fa";
 import "./index.scss";
 import { HashLink } from "react-router-hash-link";
 import { CiSearch } from "react-icons/ci";
@@ -13,15 +20,10 @@ import { Link } from "react-router-dom";
 
 const Navbar = ({ darkMode, toggleDarkMode }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
-  const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
+  const [activeAccordion, setActiveAccordion] = useState(null);
   const [genres, setGenres] = useState([]);
   const [countries, setCountries] = useState([]);
   const [years, setYears] = useState([]);
-  const dropdownRef = useRef(null);
-  const countryDropdownRef = useRef(null);
-  const yearDropdownRef = useRef(null);
 
   useEffect(() => {
     axios
@@ -52,39 +54,16 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
       });
   }, []);
 
-  useEffect(() => {
-    if (isOpen) {
-      document.querySelector(".navbar").classList.add("qora");
+  const handleAccordionToggle = (section) => {
+    if (activeAccordion === section) {
+      setActiveAccordion(null);
     } else {
-      document.querySelector(".navbar").classList.remove("qora");
+      setActiveAccordion(section);
     }
-
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-      if (
-        countryDropdownRef.current &&
-        !countryDropdownRef.current.contains(event.target)
-      ) {
-        setIsCountryDropdownOpen(false);
-      }
-      if (
-        yearDropdownRef.current &&
-        !yearDropdownRef.current.contains(event.target)
-      ) {
-        setIsYearDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [dropdownRef, countryDropdownRef, yearDropdownRef]);
+  };
 
   return (
-    <nav className={`navbar ${darkMode ? "dark" : "" || isOpen ? "dark" : ""}`}>
+    <nav className={`navbar ${darkMode || isOpen ? "dark" : ""}`}>
       <div className="container">
         <div className="flex items-center justify-between h-24 ">
           <div className="flex items-center">
@@ -94,7 +73,6 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
           </div>
           <div className="menu hidden md:flex">
             <div className=" flex items-baseline space-x-4 menu-item-box">
-              {/* <Link to={"/movies/1"}>TEST</Link> */}
               <Link to="/" className="menu-item">
                 Bosh sahifa
               </Link>
@@ -105,14 +83,14 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                 Seriallar
               </HashLink>
 
-              <div className="relative" ref={dropdownRef}>
+              <div className="relative">
                 <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  onClick={() => handleAccordionToggle("genres")}
                   className="menu-item flex items-center"
                 >
                   Janri <FaAngleDown className="ml-1" />
                 </button>
-                {isDropdownOpen && (
+                {activeAccordion === "genres" && (
                   <div
                     className={`absolute left-0 mt-2 w-64 rounded-md shadow-lg z-20 md:w-[400px] ${
                       darkMode
@@ -130,7 +108,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                               ? "text-[rgba(255,255,255,0.5)]"
                               : "text-black"
                           }`}
-                          onClick={() => setIsDropdownOpen(false)}
+                          onClick={() => setActiveAccordion(null)}
                         >
                           {genre}
                         </Link>
@@ -139,16 +117,15 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                   </div>
                 )}
               </div>
-              <div className="relative" ref={countryDropdownRef}>
+
+              <div className="relative">
                 <button
-                  onClick={() =>
-                    setIsCountryDropdownOpen(!isCountryDropdownOpen)
-                  }
+                  onClick={() => handleAccordionToggle("countries")}
                   className="menu-item flex items-center"
                 >
                   Mamlakat <FaAngleDown className="ml-1" />
                 </button>
-                {isCountryDropdownOpen && (
+                {activeAccordion === "countries" && (
                   <div
                     className={`absolute left-0 mt-2 w-64 rounded-md shadow-lg z-20 md:w-[400px] ${
                       darkMode
@@ -166,7 +143,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                               ? "text-[rgba(255,255,255,0.5)]"
                               : "text-black"
                           }`}
-                          onClick={() => setIsCountryDropdownOpen(false)}
+                          onClick={() => setActiveAccordion(null)}
                         >
                           {country}
                         </Link>
@@ -175,14 +152,15 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                   </div>
                 )}
               </div>
-              <div className="relative" ref={yearDropdownRef}>
+
+              <div className="relative">
                 <button
-                  onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
+                  onClick={() => handleAccordionToggle("years")}
                   className="menu-item flex items-center"
                 >
                   Yili <FaAngleDown className="ml-1" />
                 </button>
-                {isYearDropdownOpen && (
+                {activeAccordion === "years" && (
                   <div
                     className={`absolute left-0 mt-2 w-64 rounded-md shadow-lg z-20 md:w-[400px] ${
                       darkMode
@@ -200,7 +178,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                               ? "text-[rgba(255,255,255,0.5)]"
                               : "text-black"
                           }`}
-                          onClick={() => setIsYearDropdownOpen(false)}
+                          onClick={() => setActiveAccordion(null)}
                         >
                           {year}
                         </Link>
@@ -250,11 +228,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
         </div>
       </div>
       {isOpen && (
-        <div
-          className={`mobile-menu md:hidden ${darkMode ? "dark" : ""} ${
-            isOpen ? "dark" : ""
-          }`}
-        >
+        <div className={`mobile-menu md:hidden ${darkMode ? "dark" : ""}`}>
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 mobile-menu-boxx">
             <Link to="/" className="mobile-menu-item">
               Bosh sahifa
@@ -267,20 +241,20 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
             </HashLink>
             <div className="relative">
               <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                onClick={() => handleAccordionToggle("genres")}
                 className="mobile-menu-item flex items-center"
               >
                 Janri <FaAngleDown className="ml-1" />
               </button>
-              {isDropdownOpen && (
+              {activeAccordion === "genres" && (
                 <div
                   className={`absolute left-0 mt-2 w-full rounded-md shadow-lg z-20 ${
                     darkMode
                       ? "bg-[rgba(0,0,0,0.72)]"
-                      : "bg-[rgba(255,255,255,0.5)]"
+                      : "bg-[rgba(255,255,255,0.72)]"
                   }`}
                 >
-                  <div className="grid grid-cols-3 gap-2 text-xs p-2 m-2 ">
+                  <div className="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 gap-3 p-2">
                     {genres.map((genre) => (
                       <Link
                         key={genre}
@@ -290,7 +264,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                             ? "text-[rgba(255,255,255,0.5)]"
                             : "text-black"
                         }`}
-                        onClick={() => setIsDropdownOpen(false)}
+                        onClick={() => setActiveAccordion(null)}
                       >
                         {genre}
                       </Link>
@@ -301,20 +275,20 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
             </div>
             <div className="relative">
               <button
-                onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
+                onClick={() => handleAccordionToggle("countries")}
                 className="mobile-menu-item flex items-center"
               >
                 Mamlakat <FaAngleDown className="ml-1" />
               </button>
-              {isCountryDropdownOpen && (
+              {activeAccordion === "countries" && (
                 <div
                   className={`absolute left-0 mt-2 w-full rounded-md shadow-lg z-20 ${
                     darkMode
                       ? "bg-[rgba(0,0,0,0.72)]"
-                      : "bg-[rgba(255,255,255,0.5)]"
+                      : "bg-[rgba(255,255,255,0.72)]"
                   }`}
                 >
-                  <div className="grid grid-cols-3 gap-3 p-2">
+                  <div className="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 gap-3 p-2">
                     {countries.map((country) => (
                       <Link
                         key={country}
@@ -324,7 +298,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                             ? "text-[rgba(255,255,255,0.5)]"
                             : "text-black"
                         }`}
-                        onClick={() => setIsCountryDropdownOpen(false)}
+                        onClick={() => setActiveAccordion(null)}
                       >
                         {country}
                       </Link>
@@ -335,20 +309,20 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
             </div>
             <div className="relative">
               <button
-                onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
+                onClick={() => handleAccordionToggle("years")}
                 className="mobile-menu-item flex items-center"
               >
                 Yili <FaAngleDown className="ml-1" />
               </button>
-              {isYearDropdownOpen && (
+              {activeAccordion === "years" && (
                 <div
                   className={`absolute left-0 mt-2 w-full rounded-md shadow-lg z-20 ${
                     darkMode
-                      ? "bg-[rgba(0,0,0,0.2)]"
-                      : "bg-[rgba(255,255,255,0.5)]"
+                      ? "bg-[rgba(0,0,0,0.72)]"
+                      : "bg-[rgba(255,255,255,0.72)]"
                   }`}
                 >
-                  <div className="grid grid-cols-4 gap-3 p-2">
+                  <div className="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 gap-3 p-2">
                     {years.map((year) => (
                       <Link
                         key={year}
@@ -358,7 +332,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                             ? "text-[rgba(255,255,255,0.5)]"
                             : "text-black"
                         }`}
-                        onClick={() => setIsYearDropdownOpen(false)}
+                        onClick={() => setActiveAccordion(null)}
                       >
                         {year}
                       </Link>

@@ -123,8 +123,24 @@ function Search() {
                 )}
               </button>
             </div>
+          </div>{" "}
+          {/* <div className="flex items-baseline space-x-4 menu-item-box"> */}
+          {/* Mobile input */}
+          <div className="lg:hidden md:hidden flex justify-between border border-gray-300 py-3 px-4 rounded-xl w-100">
+            <input
+              type="text"
+              placeholder="Qidiruv"
+              className={`w-[50vw] ${
+                darkMode ? "bg-black text-white" : "text-black bg-white"
+              }`}
+              onChange={handleInputChange}
+              value={searchText}
+            />
+            <CiSearch
+              className={`text-2xl  ${darkMode ? "text-white" : "text-black"}`}
+            />
           </div>
-
+          {/* </div> */}
           {error ? (
             <h2
               className={`text-2xl font-bold mb-3 ${
@@ -163,7 +179,7 @@ function Search() {
                     <img
                       src={movie.photo}
                       alt={movie.name}
-                      className="w-72 h-80 object-cover"
+                      className="w-[100%] h-80 object-cover"
                     />
                     <div className="absolute top-2 left-2 bg-yellow-500 text-white rounded-xl-full px-2 py-1 text-xs font-bold flex items-center">
                       <FaStar className="mr-1" /> {movie.like || 0}
