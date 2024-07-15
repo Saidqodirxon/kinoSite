@@ -185,6 +185,8 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                     {vidData.f480 && (
                       <a
                         href={vidData.f480}
+                        download={`${vidData.name}_480p.mp4`}
+                        target="_blank"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         480p
@@ -193,6 +195,8 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                     {vidData.f720 && (
                       <a
                         href={vidData.f720}
+                        download={`${vidData.name}_720p.mp4`}
+                        target="_blank"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         720p
@@ -201,7 +205,8 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                     {vidData.f1080 && (
                       <a
                         href={vidData.f1080}
-                        download={`${vidData.name}.mp4`}
+                        download={`${vidData.name}_1080p.mp4`}
+                        target="_blank"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         1080p
