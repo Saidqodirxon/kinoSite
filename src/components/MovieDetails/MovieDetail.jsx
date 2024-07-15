@@ -270,65 +270,87 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
           className="relative max-w-full mx-auto rounded-lg overflow-hidden shadow-lg mt-20"
           id="videoPlayer"
         >
-          <div
-            className={`relative max-w-full mx-auto mt-4 rounded-lg overflow-hidden shadow-lg `}
-          >
-            <Player
-              ref={playerRef}
-              playsInline
-              poster="/big_banner.png"
-              src={vidData.f1080 || vidData.f720 || vidData.f480}
-              autoPlay={playing}
-              onPlay={() => setPlaying(true)}
-              onPause={() => setPlaying(false)}
-              onEnded={() => setPlaying(false)}
-              onWaiting={() => setPlaying(false)}
-              onTimeUpdate={(e) => setPlayed(e.target.currentTime)}
-              onPlaying={() => setPlaying(true)}
+          {isMobile ? (
+            // Mobile version
+            <div className="relative w-full h-64">
+              <video
+                ref={playerRef}
+                controls
+                poster="/big_banner.png"
+                src={vidData.f1080 || vidData.f720 || vidData.f480}
+                className="w-full h-full object-cover"
+                onPlay={() => setPlaying(true)}
+                onPause={() => setPlaying(false)}
+                onEnded={() => setPlaying(false)}
+                onWaiting={() => setPlaying(false)}
+                onTimeUpdate={(e) => setPlayed(e.target.currentTime)}
+              />
+            </div>
+          ) : (
+            // Desktop version
+            <div
+              className={`relative max-w-full mx-auto mt-4 rounded-lg overflow-hidden shadow-lg `}
             >
-              <BigPlayButton position="center" />
-              <LoadingSpinner />
-              <ControlBar autoHide={true} className="my-class md:px-2 lg:px-2">
-                {!isMobile && <ReplayControl seconds={10} order={1.1} />}
-                {!isMobile && <ForwardControl seconds={10} order={1.2} />}
-                {<VolumeMenuButton vertical />}
-                <div className="flex items-center">
-                  {!isMobile && (
-                    <button
-                      onClick={() => {
-                        if (document.pictureInPictureElement) {
-                          document.exitPictureInPicture();
-                        } else {
-                          playerRef.current.video.video.requestPictureInPicture();
-                        }
-                      }}
-                      className="icon-control ml-2"
+              <Player
+                ref={playerRef}
+                playsInline
+                poster="/big_banner.png"
+                src={vidData.f1080 || vidData.f720 || vidData.f480}
+                autoPlay={playing}
+                onPlay={() => setPlaying(true)}
+                onPause={() => setPlaying(false)}
+                onEnded={() => setPlaying(false)}
+                onWaiting={() => setPlaying(false)}
+                onTimeUpdate={(e) => setPlayed(e.target.currentTime)}
+                onPlaying={() => setPlaying(true)}
+              >
+                <BigPlayButton position="center" />
+                <LoadingSpinner />
+                <ControlBar
+                  autoHide={true}
+                  className="my-class md:px-2 lg:px-2"
+                >
+                  {!isMobile && <ReplayControl seconds={10} order={1.1} />}
+                  {!isMobile && <ForwardControl seconds={10} order={1.2} />}
+                  {<VolumeMenuButton vertical />}
+                  <div className="flex items-center">
+                    {!isMobile && (
+                      <button
+                        onClick={() => {
+                          if (document.pictureInPictureElement) {
+                            document.exitPictureInPicture();
+                          } else {
+                            playerRef.current.video.video.requestPictureInPicture();
+                          }
+                        }}
+                        className="icon-control ml-2"
+                      >
+                        <MdPictureInPicture className="text-xl" />
+                      </button>
+                    )}
+                    <select
+                      value={quality}
+                      onChange={(e) => handleQualityChange(e.target.value)}
+                      className="bg-transparent text-white rounded-lg p-[0.5px] lg:ml-2 md:ml-2"
                     >
-                      <MdPictureInPicture className="text-xl" />
-                    </button>
+                      {Object.keys({
+                        ...(vidData.f480 && { "480px": vidData.f480 }),
+                        ...(vidData.f720 && { "720px": vidData.f720 }),
+                        ...(vidData.f1080 && { "1080px": vidData.f1080 }),
+                      }).map((format) => (
+                        <option key={format} value={format}>
+                          {format}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {!isMobile && (
+                    <PlaybackRateMenuButton rates={[2, 1.5, 1.25, 1, 0.5]} />
                   )}
-                  <select
-                    value={quality}
-                    onChange={(e) => handleQualityChange(e.target.value)}
-                    className="bg-transparent text-white rounded-lg p-[0.5px] lg:ml-2 md:ml-2"
-                  >
-                    {Object.keys({
-                      ...(vidData.f480 && { "480px": vidData.f480 }),
-                      ...(vidData.f720 && { "720px": vidData.f720 }),
-                      ...(vidData.f1080 && { "1080px": vidData.f1080 }),
-                    }).map((format) => (
-                      <option key={format} value={format}>
-                        {format}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {!isMobile && (
-                  <PlaybackRateMenuButton rates={[2, 1.5, 1.25, 1, 0.5]} />
-                )}
-              </ControlBar>
-            </Player>
-          </div>
+                </ControlBar>
+              </Player>
+            </div>
+          )}
         </div>
       ) : vidData?.additional_player ? (
         <div className="w-full flex justify-center mt-4">
