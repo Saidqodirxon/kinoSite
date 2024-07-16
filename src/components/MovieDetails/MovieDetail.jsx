@@ -40,6 +40,7 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
   const [dislikeCount, setDislikeCount] = useState(movie.dislike || 0); // Initialize dislike count
   const playerRef = useRef(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const useScreenWidth = () => {
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -156,15 +157,13 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
   };
 
   const handleFullscreenToggle = () => {
-    const playerElement = playerRef.current.rootElement;
-    if (!document.fullscreenElement) {
-      playerElement.requestFullscreen().catch((err) => {
-        console.log(
-          `Error attempting to enable full-screen mode: ${err.message} (${err.name})`
-        );
-      });
-    } else {
-      document.exitFullscreen();
+    if (playerRef.current) {
+      if (!document.fullscreenElement) {
+        playerRef.current.wrapper.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+      setIsFullscreen((prevFullscreen) => !prevFullscreen);
     }
   };
 
@@ -179,7 +178,7 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
           />
           <div className="relative flex flex-col gap-2">
             <HashLink
-              to={`/movies/${movie.id}/#videoPlayer`}
+              to={`/movies/${movie.name}/#videoPlayer`}
               className="flex justify-center items-center gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
             >
               Tomosha qilish
@@ -291,6 +290,25 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
           <div
             className={`relative max-w-full mx-auto mt-4 rounded-lg overflow-hidden shadow-lg `}
           >
+            <div className="md:hidden lg:hidden">
+              {" "}
+              <select
+                value={quality}
+                onChange={(e) => handleQualityChange(e.target.value)}
+                className="bg-transparent text-white rounded-lg p-[0.5px] lg:ml-2 md:ml-2"
+                order={2.1}
+              >
+                {Object.keys({
+                  ...(vidData.f480 && { "480px": vidData.f480 }),
+                  ...(vidData.f720 && { "720px": vidData.f720 }),
+                  ...(vidData.f1080 && { "1080px": vidData.f1080 }),
+                }).map((format) => (
+                  <option key={format} value={format}>
+                    {format}
+                  </option>
+                ))}
+              </select>
+            </div>
             <Player
               ref={playerRef}
               playsInline
@@ -325,23 +343,33 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                       <MdPictureInPicture className="text-xl" />
                     </button>
                   )}
-                  <select
-                    value={quality}
-                    onChange={(e) => handleQualityChange(e.target.value)}
-                    className="bg-transparent text-white rounded-lg p-[0.5px] lg:ml-2 md:ml-2"
-                    order={2.1}
-                  >
-                    {Object.keys({
-                      ...(vidData.f480 && { "480px": vidData.f480 }),
-                      ...(vidData.f720 && { "720px": vidData.f720 }),
-                      ...(vidData.f1080 && { "1080px": vidData.f1080 }),
-                    }).map((format) => (
-                      <option key={format} value={format}>
-                        {format}
-                      </option>
-                    ))}
-                  </select>
+                  {!isMobile && (
+                    <select
+                      value={quality}
+                      onChange={(e) => handleQualityChange(e.target.value)}
+                      className="bg-transparent text-white rounded-lg p-[0.5px] lg:ml-2 md:ml-2"
+                      order={2.1}
+                    >
+                      {Object.keys({
+                        ...(vidData.f480 && { "480px": vidData.f480 }),
+                        ...(vidData.f720 && { "720px": vidData.f720 }),
+                        ...(vidData.f1080 && { "1080px": vidData.f1080 }),
+                      }).map((format) => (
+                        <option key={format} value={format}>
+                          {format}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
+                {isMobile && (
+                  <button
+                    onClick={handleFullscreenToggle}
+                    className="text-white hover:text-gray-300 px-5"
+                  >
+                    {isFullscreen ? <FaCompress /> : <FaExpand />}
+                  </button>
+                )}
                 {!isMobile && (
                   <PlaybackRateMenuButton
                     rates={[2, 1.5, 1.25, 1, 0.5]}
