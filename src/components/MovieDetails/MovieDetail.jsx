@@ -158,8 +158,9 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
 
   const handleFullscreenToggle = () => {
     if (playerRef.current) {
+      const videoElement = playerRef.current.video.video; // Get the video element
       if (!document.fullscreenElement) {
-        playerRef.current.wrapper.requestFullscreen();
+        videoElement.requestFullscreen();
       } else {
         document.exitFullscreen();
       }
