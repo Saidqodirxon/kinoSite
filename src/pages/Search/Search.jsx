@@ -2,7 +2,14 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaCircle, FaEye, FaStar, FaTimes } from "react-icons/fa";
+import {
+  FaCircle,
+  FaEye,
+  FaStar,
+  FaTimes,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CiSearch } from "react-icons/ci";
 import Footer from "../../components/Footer/Footer";
@@ -27,6 +34,8 @@ function Search() {
   const [searchText, setSearchText] = useState("");
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -40,41 +49,39 @@ function Search() {
   };
 
   useEffect(() => {
-    if (searchText) {
-      axios
-        .get(`/search?name=${searchText}`)
-        .then((response) => {
-          if (response.status === 200) {
-            const results = response.data.results;
-            if (results.length > 0) {
-              setData(results);
-              setError("");
-            } else {
-              setData([]);
-              setError(`${searchText} bo'yicha natija topilmadi.`);
-            }
-          }
-        })
-        .catch(() => {
-          setData([]);
-          setError(`${searchText} bo'yicha natija topilmadi.`);
-        });
-    } else {
-      axios
-        .get("/search")
-        .then((response) => {
-          setData(response.data.results);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `/search?name=${searchText}&page=${currentPage}&limit=10`
+        );
+        if (response.status === 200) {
+          const results = response.data.results;
+          setData(results);
+          setTotalPages(Math.ceil(response.data.count / 10));
           setError("");
-        })
-        .catch(() => {
-          setData([]);
-          setError("Server bilan bog'lanishda xatolik yuz berdi.");
-        });
+        }
+      } catch {
+        setData([]);
+        setError(`${searchText} bo'yicha natija topilmadi.`);
+      }
+    };
+
+    if (searchText) {
+      fetchData();
+    } else {
+      fetchData();
     }
-  }, [searchText]);
+  }, [searchText, currentPage]);
 
   const handleInputChange = (e) => {
     setSearchText(e.target.value);
+    setCurrentPage(1); // Reset to first page on new search
+  };
+
+  const handlePageChange = (page) => {
+    if (page > 0 && page <= totalPages) {
+      setCurrentPage(page);
+    }
   };
 
   return (
@@ -123,9 +130,7 @@ function Search() {
                 )}
               </button>
             </div>
-          </div>{" "}
-          {/* <div className="flex items-baseline space-x-4 menu-item-box"> */}
-          {/* Mobile input */}
+          </div>
           <div className="lg:hidden md:hidden flex justify-between border border-gray-300 py-3 px-4 rounded-xl w-100">
             <input
               type="text"
@@ -140,7 +145,6 @@ function Search() {
               className={`text-2xl  ${darkMode ? "text-white" : "text-black"}`}
             />
           </div>
-          {/* </div> */}
           {error ? (
             <h2
               className={`text-2xl font-bold mb-3 ${
@@ -152,53 +156,90 @@ function Search() {
                 : error}
             </h2>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-8">
-              {data.map((movie) => (
-                <Link
-                  to={
-                    movie.type === "movie"
-                      ? `/movies/${movie.name}`
-                      : movie.type === "anime"
-                      ? `/series/${movie.name}`
-                      : movie.type === "anime/series"
-                      ? `/series/${movie.name}`
-                      : movie.type === "cartoon"
-                      ? `/movies/${movie.name}`
-                      : movie.type === "cartoon/series"
-                      ? `/series/${movie.name}`
-                      : movie.type === "series"
-                      ? `/series/${movie.name}`
-                      : `/`
-                  }
-                  key={movie.id}
-                  className={`shadow-lg rounded-xl-lg overflow-hidden mx-2 ${
-                    darkMode ? "bg-gray-800 text-white" : "bg-white text-black"
-                  }`}
-                >
-                  <div className="relative">
-                    <img
-                      src={movie.photo}
-                      alt={movie.name}
-                      className="w-[100%] h-80 object-cover"
-                    />
-                    <div className="absolute top-2 left-2 bg-yellow-500 text-white rounded-xl-full px-2 py-1 text-xs font-bold flex items-center">
-                      <FaStar className="mr-1" /> {movie.like || 0}
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-bold mb-2">
-                      {truncateText(movie.name, 10)}
-                    </h3>
-                    <div className="flex justify-between text-sm text-gray-600">
-                      <p className="flex justify-center">Yili: {movie.year}</p>
-                      <div className="flex items-center text-gray-600 text-sm">
-                        <FaEye className="mr-1" /> {movie.views}
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-8">
+                {data.map((movie) => (
+                  <Link
+                    to={
+                      movie.type === "movie"
+                        ? `/movies/${movie.name}`
+                        : movie.type === "anime"
+                        ? `/series/${movie.name}`
+                        : movie.type === "anime/series"
+                        ? `/series/${movie.name}`
+                        : movie.type === "cartoon"
+                        ? `/movies/${movie.name}`
+                        : movie.type === "cartoon/series"
+                        ? `/series/${movie.name}`
+                        : movie.type === "series"
+                        ? `/series/${movie.name}`
+                        : `/`
+                    }
+                    key={movie.id}
+                    className={`shadow-lg rounded-xl-lg overflow-hidden mx-2 ${
+                      darkMode
+                        ? "bg-gray-800 text-white"
+                        : "bg-white text-black"
+                    }`}
+                  >
+                    <div className="relative">
+                      <img
+                        src={movie.photo}
+                        alt={movie.name}
+                        className="w-[100%] h-80 object-cover"
+                      />
+                      <div className="absolute top-2 left-2 bg-yellow-500 text-white rounded-xl-full px-2 py-1 text-xs font-bold flex items-center">
+                        <FaStar className="mr-1" /> {movie.like || 0}
                       </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                    <div className="p-4">
+                      <h3 className="text-lg font-bold mb-2">
+                        {truncateText(movie.name, 10)}
+                      </h3>
+                      <div className="flex justify-between text-sm text-gray-600">
+                        <p className="flex justify-center">
+                          Yili: {movie.year}
+                        </p>
+                        <div className="flex items-center text-gray-600 text-sm">
+                          <FaEye className="mr-1" /> {movie.views}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <div className="flex justify-center mt-4">
+                <button
+                  className={`px-4 py-2 mx-2 ${
+                    darkMode
+                      ? "bg-gray-700 text-white"
+                      : "bg-gray-200 text-black"
+                  }`}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  <FaChevronLeft />
+                </button>
+                <span
+                  className={`px-4 py-2 ${
+                    darkMode ? "text-white" : "text-black"
+                  }`}
+                >
+                  {currentPage} / {totalPages}
+                </span>
+                <button
+                  className={`px-4 py-2 mx-2 ${
+                    darkMode
+                      ? "bg-gray-700 text-white"
+                      : "bg-gray-200 text-black"
+                  }`}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  <FaChevronRight />
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
