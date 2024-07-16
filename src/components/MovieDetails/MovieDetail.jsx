@@ -155,6 +155,19 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
       });
   };
 
+  const handleFullscreenToggle = () => {
+    const playerElement = playerRef.current.rootElement;
+    if (!document.fullscreenElement) {
+      playerElement.requestFullscreen().catch((err) => {
+        console.log(
+          `Error attempting to enable full-screen mode: ${err.message} (${err.name})`
+        );
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
   return (
     <>
       <div className={`flex flex-col md:flex-row justify-between mt-32 p-4`}>
@@ -331,6 +344,16 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                 {!isMobile && (
                   <PlaybackRateMenuButton rates={[2, 1.5, 1.25, 1, 0.5]} />
                 )}
+                <button
+                  onClick={handleFullscreenToggle}
+                  className="icon-control ml-2"
+                >
+                  {document.fullscreenElement ? (
+                    <FaCompress className="text-xl" />
+                  ) : (
+                    <FaExpand className="text-xl" />
+                  )}
+                </button>
               </ControlBar>
             </Player>
           </div>
