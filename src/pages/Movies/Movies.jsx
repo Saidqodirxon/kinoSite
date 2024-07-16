@@ -9,6 +9,7 @@ import Footer from "../../components/Footer/Footer";
 import MovieDetails from "../../components/MovieDetails/MovieDetail";
 import Loading from "../../components/Loading/Loading";
 import NotFound from "../NotFound/NotFound";
+import { Helmet } from "react-helmet";
 
 const MoviePage = () => {
   const { title } = useParams();
@@ -117,6 +118,54 @@ const MoviePage = () => {
 
   return (
     <>
+      {" "}
+      <Helmet>
+        <title>
+          {movieData.name} | Noyob.Tv - Ajoyib Tarjima film, Anime, Multfilm va
+          Seriyallar
+        </title>
+        <meta
+          name="description"
+          content={movieData.description || "No Description"}
+        />
+        <meta
+          name="keywords"
+          content={`${movieData.name}, Film, ${
+            movieData.genre || "No Genre"
+          }, ${movieData.director || "No Director"}, ${
+            movieData.actors || "No Actors"
+          }, ${movieData.year || "No Year"}`}
+        />
+        <meta
+          property="og:title"
+          content={`${movieData.name} - Ajoyib Film va Seriyalar`}
+        />
+        <meta
+          property="og:description"
+          content={movieData.description || "No Description"}
+        />
+        <meta
+          property="og:image"
+          content={movieData.photo || "/big_banner.png"}
+        />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Ajoyib Film va Seriyalar" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content={`${movieData.name} - Ajoyib Film va Seriyalar`}
+        />
+        <meta
+          name="twitter:description"
+          content={movieData.description || "No Description"}
+        />
+        <meta
+          name="twitter:image"
+          content={movieData.photo || "/big_banner.png"}
+        />
+        <meta name="twitter:url" content={window.location.href} />
+      </Helmet>
       <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       <div
         className={`min-h-screen ${
