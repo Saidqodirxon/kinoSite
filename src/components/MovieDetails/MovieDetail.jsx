@@ -75,8 +75,10 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
   const fetchMovieInfo = async () => {
     try {
       const response = await axios.get(`/info/${movie.id}`);
-      const updatedMovie = response.vidDresult;
+      const updatedMovie = response.data.result;
+      // console.log(updatedMovie, "updatedMovie");
       setLikeCount(updatedMovie.like);
+      // console.log(likeCount, "LikeCount");
       setDislikeCount(updatedMovie.dislike);
     } catch (error) {
       console.error("Error fetching movie info:", error);
@@ -161,8 +163,10 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
     <>
       <div className="flex justify-between mt-32 px-[2%]">
         {" "}
-        <h1 className="text-4xl font-bold">{movie.name || ""}</h1>
-        <h2 className="text-3xl font-bold">
+        <h1 className="lg:text-4xl md:text-4xl font-bold">
+          {movie.name || ""}
+        </h1>
+        <h2 className="lg:text-3xl md:text-3xl font-bold">
           {movie.created_at
             ? format(parseISO(movie.created_at), "MMMM dd, yyyy")
             : "" || ""}
