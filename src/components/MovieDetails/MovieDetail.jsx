@@ -29,6 +29,7 @@ import {
   ForwardControl,
 } from "video-react";
 import "video-react/dist/video-react.css"; // import css
+import { format, parseISO } from "date-fns";
 
 const MovieDetails = ({ movie, vidData, darkMode }) => {
   const [playing, setPlaying] = useState(false);
@@ -156,28 +157,26 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
       });
   };
 
-  const handleFullscreenToggle = () => {
-    if (playerRef.current) {
-      const videoElement = playerRef.current.video.video; // Get the video element
-      if (!document.fullscreenElement) {
-        videoElement.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
-      setIsFullscreen((prevFullscreen) => !prevFullscreen);
-    }
-  };
-
   return (
     <>
-      <div className={`flex flex-col md:flex-row justify-between mt-32 p-4`}>
+      <div className="flex justify-between mt-32 px-[2%]">
+        {" "}
+        <h1 className="text-4xl font-bold">{movie.name || ""}</h1>
+        <h2 className="text-3xl font-bold">
+          {movie.created_at
+            ? format(parseISO(movie.created_at), "MMMM dd, yyyy")
+            : "" || ""}
+        </h2>
+      </div>
+      <div className={`flex flex-col md:flex-row justify-between p-4`}>
         <div className="flex-col md:flex-row p-4">
+          {" "}
           <img
             src={movie.photo || "/big_banner.png"}
             alt="Movie Poster"
-            className="w-100 h-auto mb-4 md:mb-0 md:mr-4"
+            className="w-100 h-auto mb-4 md:mb-0 md:mr-4 "
           />
-          <div className="relative flex flex-col gap-2">
+          <div className="relative flex flex-col gap-2 mt-4">
             <HashLink
               to={`/movies/${movie.name}/#videoPlayer`}
               className="flex justify-center items-center gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
@@ -234,10 +233,13 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
 
         <div className="flex gap-4">
           <div className="mt-10 leading-6">
-            <h1 className="text-4xl font-bold my-2">{movie.name || ""}</h1>
             <p className="mt-2">{movie.description || ""}</p>
             <ul className="mt-4">
-              <li>
+              <li className="">
+                <strong className="text-2xl">Film haqida qisqacha:</strong>{" "}
+                <h2 className="leading-7 mt-4">{movie.info}</h2>
+              </li>
+              <li className="mt-6">
                 <strong>Janr:</strong>{" "}
                 {movie.genre ? movie.genre.join(", ") : ""}
               </li>
@@ -252,10 +254,6 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
               </li>
               <li>
                 <strong>Yosh chegarasi:</strong> {`${movie.age}+` || ""}
-              </li>
-              <li>
-                <strong>Film haqida:</strong>{" "}
-                <h2 className="leading-7">{movie.info}</h2>
               </li>
             </ul>
             <div className="flex gap-4 mt-4">
@@ -363,14 +361,7 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                     </select>
                   )}
                 </div>
-                {isMobile && (
-                  <button
-                    onClick={handleFullscreenToggle}
-                    className="text-white hover:text-gray-300 px-5"
-                  >
-                    {isFullscreen ? <FaCompress /> : <FaExpand />}
-                  </button>
-                )}
+
                 {!isMobile && (
                   <PlaybackRateMenuButton
                     rates={[2, 1.5, 1.25, 1, 0.5]}
