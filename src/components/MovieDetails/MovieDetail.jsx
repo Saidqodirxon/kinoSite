@@ -302,9 +302,9 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                 order={2.1}
               >
                 {Object.keys({
-                  ...(vidData.f480 && { "480px": vidData.f480 }),
-                  ...(vidData.f720 && { "720px": vidData.f720 }),
-                  ...(vidData.f1080 && { "1080px": vidData.f1080 }),
+                  ...(vidData.f480 && { "480p": vidData.f480 }),
+                  ...(vidData.f720 && { "720p": vidData.f720 }),
+                  ...(vidData.f1080 && { "1080p": vidData.f1080 }),
                 }).map((format) => (
                   <option key={format} value={format}>
                     {format}
@@ -354,9 +354,9 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                       order={2.1}
                     >
                       {Object.keys({
-                        ...(vidData.f480 && { "480px": vidData.f480 }),
-                        ...(vidData.f720 && { "720px": vidData.f720 }),
-                        ...(vidData.f1080 && { "1080px": vidData.f1080 }),
+                        ...(vidData.f480 && { "480p": vidData.f480 }),
+                        ...(vidData.f720 && { "720p": vidData.f720 }),
+                        ...(vidData.f1080 && { "1080p": vidData.f1080 }),
                       }).map((format) => (
                         <option key={format} value={format}>
                           {format}
