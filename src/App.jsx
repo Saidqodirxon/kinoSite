@@ -9,6 +9,7 @@ import SeriesPage from "./pages/Series/Series";
 import Filters from "./pages/Filters/Filters";
 import Search from "./pages/Search/Search";
 import VideoPlayer from "./pages/Player";
+import NotFound from "./pages/NotFound/NotFound";
 
 function App() {
   // React.useEffect(() => {
@@ -43,10 +44,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/movies/:id" element={<MoviePage />} />
-          <Route path="/series" element={<SeriesPage />} />
+          <Route path="/series/:id" element={<SeriesPage />} />
           <Route path="/filter" element={<Filters />} />
           <Route path="/search" element={<Search />} />
           <Route path="/player" element={<VideoPlayer />} />
+          {/* <Route path="/*" element={<NotFound />} /> */}
         </Routes>
       </div>
     </Router>

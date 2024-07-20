@@ -1,59 +1,118 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Helmet } from "react-helmet";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import CommentsSection from "../../components/Comments/Comments";
+import SimilarMovies from "../../components/SimilarMovies/SimilarMovies";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
-import SeriesDetail from "../../components/SeriesDetails/SeriesDetail";
-import SimilarMovies from "../../components/SimilarMovies/SimilarMovies";
-
-const SeriesData = {
-  series: {
-    title: "Asalarichi",
-    description: "Ushbu bo'limning qisqacha tavsifi...",
-    poster: "/kino_banner_1.png",
-    genre: "Aksiya, Triller",
-    duration: "1 soat 34 daqiqa",
-    year: 2024,
-    director: "Ismi",
-    actors: "Ismlar",
-    videoUrl: {
-      HD: "https://v.xudoberdi.uz/v2XqPfZD_h.mp4",
-      "480px":
-        "https://v.xudoberdi.uz/Ajdahon%20to%E2%80%99pi%20z%20%20Dragon%20ball%20z%20720p.mp4",
-    },
-    // iframeLink: "https://ok.ru/videoembed/7222941911716",
-    rating: 9.8,
-    votes: 12345,
-    releaseDate: "12.12.2024",
-    country: "Russiya",
-  },
-  comments: [
-    { username: "Doniyor", comment: "Ajoyib film ekan." },
-    { username: "Said", comment: "Juda qiziq va ma'lumotli." },
-    { username: "Elyos", comment: "Zo'r" },
-    { username: "Begzod", comment: "Juda ajoyib" },
-    { username: "Aziz", comment: "Ajoyib film ekan." },
-    {
-      username: "Shahina",
-      comment: "Juda qiziq va ma'lumotli.",
-      date: "11sentabr 2022",
-    },
-  ],
-  similarMovies: [
-    { title: "Atlas", image: "/kino_banner_1.png" },
-    { title: "Godzilla vs. Kong", image: "/kino_banner_2.png" },
-    { title: "Umarqu hero", image: "/kino_banner_3.png" },
-    { title: "Kungfu Panda 4", image: "/kino_banner_4.png" },
-    { title: "Shrek 2", image: "/kino_banner_5.png" },
-  ],
-};
+import Loading from "../../components/Loading/Loading";
+import NotFound from "../NotFound/NotFound";
+import { Helmet } from "react-helmet";
+import SeriesDetails from "../../components/SeriesDetails/SeriesDetail";
 
 const SeriesPage = () => {
+  const { title } = useParams();
   const [darkMode, setDarkMode] = useState(() => {
     const savedDarkMode = localStorage.getItem("darkMode");
     return savedDarkMode ? JSON.parse(savedDarkMode) : false;
   });
+
+  const [movieData, setMovieData] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [similarMovies, setSimilarMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [vidData, setVidData] = useState(null);
+
+  const navigate = useNavigate();
+
+  const fetchComments = async (movieId) => {
+    try {
+      const response = await axios.get(`/comments/${movieId}`);
+      setComments(response.data.comments);
+    } catch (error) {
+      console.error("Failed to fetch comments", error);
+      setError("Failed to fetch comments");
+    }
+  };
+
+  useEffect(() => {
+    const extractTitle = () => {
+      const url = window.location.href;
+      const moviePath = url.split("/movies/")[1];
+      const seriesPath = url.split("/series/")[1];
+      const path = moviePath || seriesPath;
+      if (path) {
+        const [extractedTitle] = path.split("/");
+        return extractedTitle ? decodeURIComponent(extractedTitle) : "";
+      }
+      return "";
+    };
+
+    const decodedTitle = extractTitle();
+
+    // if (!decodedTitle) {
+    //   setError("Invalid URL");
+    //   setLoading(false);
+    //   return navigate("/notfound");
+    // }
+
+    console.log(decodedTitle, "Decoded Title");
+    axios
+      .get(`/search/?name=${decodedTitle}`)
+      .then((response) => {
+        console.log(response, "res");
+        if (response.data.results.length === 0) {
+          throw new Error("Movie not found");
+        }
+        const movieId = response.data.results[0].id; // Assuming the first result is the desired movie
+
+        if (response.data.results[0].type == "series") {
+          console.log(response.data.results[0].type == "series");
+          return axios.get(`/serie/${movieId}`);
+        } else if (response.data.results[0].type == "cartoon/series") {
+          console.log(response.data.results[0].type == "cartoon/series");
+          return axios.get(`/cartoon/${movieId}`);
+        } else if (response.data.results[0].type == "anime/series") {
+          console.log(response.data.results[0].type == "anime/series");
+          return axios.get(`/anime/${movieId}`);
+        }
+      })
+
+      .then((response) => {
+        setMovieData(response.data.info);
+        setVidData(response.data.results);
+        console.log(vidData, "VIDDD");
+        setComments(response.data.comments);
+        // Get all genres from the movie data
+        const genres = response.data.info.genre;
+        // Fetch similar movies for each genre
+        const genreRequests = genres.map((genre) =>
+          axios.get(`/filter/movies/?genre=${genre}`)
+        );
+        console.log(response.data.comments, "COMMENTS");
+        return Promise.all(genreRequests);
+      })
+      .then((responses) => {
+        // Collect similar movies from all genre responses
+        const allSimilarMovies = responses.flatMap(
+          (response) => response.data.results
+        );
+        // Remove duplicates based on movie ID
+        const uniqueMovies = Array.from(
+          new Map(allSimilarMovies.map((movie) => [movie.id, movie])).values()
+        );
+        setSimilarMovies(uniqueMovies);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch data", error);
+        setError(error.message || "Failed to fetch data");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [title]);
 
   useEffect(() => {
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
@@ -63,38 +122,57 @@ const SeriesPage = () => {
     setDarkMode((prevDarkMode) => !prevDarkMode);
   };
 
-  const [data, setData] = useState(SeriesData);
-
-  if (!data) return <div>Loading...</div>;
+  if (loading) return <Loading />;
+  if (error) return <div>{error}</div>;
 
   return (
     <>
+      {" "}
       <Helmet>
         <title>
-          {data.series.title} | Noyob.Tv - Ajoyib Tarjima film, Anime, Multfilm
-          va Seriyallar
+          {movieData.name} | Noyob.Tv - Ajoyib Tarjima film, Anime, Multfilm va
+          Seriyallar
         </title>
-        <meta name="description" content={data.series.description} />
+        <meta
+          name="description"
+          content={movieData.description || "No Description"}
+        />
         <meta
           name="keywords"
-          content={`${data.series.title}, Film, ${data.series.genre}, ${data.series.director}, ${data.series.actors}, ${data.series.year}, Aksiya, Triller`}
+          content={`${movieData.name}, Film, ${
+            movieData.genre || "No Genre"
+          }, ${movieData.director || "No Director"}, ${
+            movieData.actors || "No Actors"
+          }, ${movieData.year || "No Year"}`}
         />
         <meta
           property="og:title"
-          content={`${data.series.title} - Ajoyib Film va Seriyalar`}
+          content={`${movieData.name} - Ajoyib Film va Seriyalar`}
         />
-        <meta property="og:description" content={data.series.description} />
-        <meta property="og:image" content={data.series.poster} />
+        <meta
+          property="og:description"
+          content={movieData.description || "No Description"}
+        />
+        <meta
+          property="og:image"
+          content={movieData.photo || "/big_banner.png"}
+        />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Ajoyib Film va Seriyalar" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content={`${data.series.title} - Ajoyib Film va Seriyalar`}
+          content={`${movieData.name} - Ajoyib Film va Seriyalar`}
         />
-        <meta name="twitter:description" content={data.series.description} />
-        <meta name="twitter:image" content={data.series.poster} />
+        <meta
+          name="twitter:description"
+          content={movieData.description || "No Description"}
+        />
+        <meta
+          name="twitter:image"
+          content={movieData.photo || "/big_banner.png"}
+        />
         <meta name="twitter:url" content={window.location.href} />
       </Helmet>
       <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
@@ -104,12 +182,19 @@ const SeriesPage = () => {
         }`}
       >
         <div className="container mx-auto p-4">
-          <SeriesDetail series={data.series} darkMode={darkMode} />
-          <CommentsSection comments={data.comments} darkMode={darkMode} />
-          <SimilarMovies
-            similarMovies={data.similarMovies}
+          <SeriesDetails
+            movie={movieData}
+            vidData={vidData}
             darkMode={darkMode}
           />
+          <CommentsSection
+            comments={comments}
+            movieId={movieData?.id}
+            vidData={vidData}
+            darkMode={darkMode}
+            fetchComments={() => fetchComments(movieData?.id)}
+          />
+          <SimilarMovies similarMovies={similarMovies} darkMode={darkMode} />
         </div>
       </div>
       <Footer darkMode={darkMode} />

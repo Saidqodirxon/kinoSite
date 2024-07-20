@@ -63,12 +63,22 @@ const MoviePage = () => {
       .get(`/search/?name=${decodedTitle}`)
       .then((response) => {
         console.log(response, "res");
+
         if (response.data.results.length === 0) {
           throw new Error("Movie not found");
         }
         const movieId = response.data.results[0].id; // Assuming the first result is the desired movie
         console.log(movieId, "Movie Id");
-        return axios.get(`/movie/${movieId}`);
+        if (response.data.results[0].type == "movie") {
+          console.log(response.data.results[0].type == "movie");
+          return axios.get(`/movie/${movieId}`);
+        } else if (response.data.results[0].type == "cartoon") {
+          console.log(response.data.results[0].type == "cartoon");
+          return axios.get(`/cartoon/${movieId}`);
+        } else if (response.data.results[0].type == "anime") {
+          console.log(response.data.results[0].type == "cartoon");
+          return axios.get(`/anime/${movieId}`);
+        }
       })
 
       .then((response) => {
