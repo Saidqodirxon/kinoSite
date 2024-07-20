@@ -324,11 +324,51 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
             >
               <BigPlayButton position="center" />
               <LoadingSpinner />
-              <ControlBar>
-                <VolumeMenuButton vertical />
-                <PlaybackRateMenuButton rates={[1, 1.5, 2]} />
-                <ReplayControl seconds={10} />
-                <ForwardControl seconds={10} />
+              <ControlBar autoHide={true} className="my-class md:px-2 lg:px-2">
+                {!isMobile && <ReplayControl seconds={10} order={1.1} />}
+                {!isMobile && <ForwardControl seconds={10} order={1.2} />}
+                {isMobile && <VolumeMenuButton disabled />}
+                <div className="flex items-center">
+                  {!isMobile && (
+                    <button
+                      onClick={() => {
+                        if (document.pictureInPictureElement) {
+                          document.exitPictureInPicture();
+                        } else {
+                          playerRef.current.video.video.requestPictureInPicture();
+                        }
+                      }}
+                      className="icon-control ml-2"
+                    >
+                      <MdPictureInPicture className="text-xl" />
+                    </button>
+                  )}
+                  {!isMobile && (
+                    <select
+                      value={quality}
+                      onChange={(e) => handleQualityChange(e.target.value)}
+                      className="bg-transparent text-white rounded-lg p-[0.5px] lg:ml-2 md:ml-2"
+                      order={2.1}
+                    >
+                      {Object.keys({
+                        ...(vidData.f480 && { "480p": vidData.f480 }),
+                        ...(vidData.f720 && { "720p": vidData.f720 }),
+                        ...(vidData.f1080 && { "1080p": vidData.f1080 }),
+                      }).map((format) => (
+                        <option key={format} value={format}>
+                          {format}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+
+                {!isMobile && (
+                  <PlaybackRateMenuButton
+                    rates={[2, 1.5, 1.25, 1, 0.5]}
+                    order={1.9}
+                  />
+                )}
               </ControlBar>
             </Player>
           </div>
