@@ -19,6 +19,7 @@ import { MdPictureInPicture } from "react-icons/md";
 import { HashLink } from "react-router-hash-link";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { saveAs } from "file-saver";
 import {
   Player,
   BigPlayButton,
@@ -46,6 +47,10 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
     vidData[0].f1080 || vidData[0].f720 || vidData[0].f480
   );
   const [partSource, setPartSource] = useState(vidData[0].part);
+  const [selectedPart, setSelectedPart] = useState(vidData[0]);
+  const [additionalPlayer, setAdditionalPlayer] = useState(
+    vidData[0].additional_player
+  );
   const [movieName, setMovieName] = useState(vidData[0].name);
   const playerRef = useRef(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -78,11 +83,18 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
   };
 
   const handleQualityChange = (format) => {
-    const currentTime = playerRef.current.getCurrentTime();
+    const currentTime = playerRef.current.video.video.currentTime;
+    const selectedPart = vidData.find((data) => data.part === partSource);
+    const newSource =
+      selectedPart[format] ||
+      selectedPart.f1080 ||
+      selectedPart.f720 ||
+      selectedPart.f480;
     setQuality(format);
+    setVideoSource(newSource);
     setTimeout(() => {
       if (playerRef.current) {
-        playerRef.current.seek(currentTime);
+        playerRef.current.video.video.currentTime = currentTime;
       }
     }, 100);
   };
@@ -156,9 +168,13 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
   const handlePartSelect = (data) => {
     setVideoSource(data.f1080 || data.f720 || data.f480);
     setPartSource(data.part);
+    setAdditionalPlayer(data.additional_player || "");
 
     setPlaying(false);
     playerRef.current.load();
+  };
+  const downloadFile = (url, fileName) => {
+    saveAs(url, fileName);
   };
 
   return (
@@ -178,54 +194,64 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
           <img
             src={movie.photo || "/big_banner.png"}
             alt="Movie Poster"
-            className="w-1/2 h-auto mb-4 md:mb-0 md:mr-4"
+            // width={5500}
+            className="w-[100%] md:min-w-[620px] lg:min-w-[620px] max-w-[1200px] h-auto mb-4 md:mb-0 md:mr-4"
           />
           <div className="relative flex flex-col gap-2 mt-4">
             <HashLink
-              to={`/movies/${movie.name}#videoPlayer`}
-              className="flex justify-center items-center gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
+              to={`/series/${movie.name}#videoPlayer`}
+              className="flex justify-center items-center w-full bg-[rgba(30,39,78,1)] border-2 rounded-3xl py-2 text-white hover:text-gray-300 text-sm md:text-base"
             >
               Tomosha qilish
             </HashLink>
             <button
-              className="flex justify-center items-center gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
+              className="flex justify-center items-center w-full bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
               onClick={toggleDropdown}
             >
-              <CiSaveDown2 />
+              <CiSaveDown2 className="mr-2" />
               <p>Yuklab olish</p>
             </button>
             {dropdownVisible && (
               <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                 <div className="py-1">
-                  {vidData[0].f480 && (
-                    <a
-                      href={vidData[0].f480}
-                      download={`${vidData[0].name}_480p.mp4`}
-                      target="_blank"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  {selectedPart.f480 && (
+                    <button
+                      onClick={() =>
+                        downloadFile(
+                          selectedPart.f480,
+                          `${selectedPart.name}_480p.mp4`
+                        )
+                      }
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       480p
-                    </a>
+                    </button>
                   )}
-                  {vidData[0].f720 && (
-                    <a
-                      href={vidData[0].f720}
-                      download={`${vidData[0].name}_720p.mp4`}
-                      target="_blank"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  {selectedPart.f720 && (
+                    <button
+                      onClick={() =>
+                        downloadFile(
+                          selectedPart.f720,
+                          `${selectedPart.name}_720p.mp4`
+                        )
+                      }
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       720p
-                    </a>
+                    </button>
                   )}
-                  {vidData[0].f1080 && (
-                    <a
-                      href={vidData[0].f1080}
-                      download={`${vidData[0].name}_1080p.mp4`}
-                      target="_blank"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  {selectedPart.f1080 && (
+                    <button
+                      onClick={() =>
+                        downloadFile(
+                          selectedPart.f1080,
+                          `${selectedPart.name}_1080p.mp4`
+                        )
+                      }
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       1080p
-                    </a>
+                    </button>
                   )}
                 </div>
               </div>
@@ -284,96 +310,161 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
           </div>
         </div>
       </div>
-
-      <div id="videoPlayer" className="relative mt-8">
-        <div
-          className="relative max-w-full mx-auto rounded-lg overflow-hidden shadow-lg mt-20"
-          id="videoPlayer"
-        >
+      {videoSource ? (
+        <div id="videoPlayer" className="relative mt-8">
           <div
-            className={`relative max-w-full mx-auto mt-4 rounded-lg overflow-hidden shadow-lg`}
+            className="relative max-w-full mx-auto rounded-lg overflow-hidden shadow-lg mt-20"
+            id="videoPlayer"
           >
-            <select
-              value={quality}
-              onChange={(e) => handleQualityChange(e.target.value)}
-              className="bg-transparent rounded-lg p-[0.5px] lg:ml-2 md:ml-2"
-              order={2.1}
+            <div
+              className={`relative max-w-full mx-auto mt-4 rounded-lg overflow-hidden shadow-lg`}
             >
-              {Object.keys({
-                ...(vidData[0].f480 && { "480p": vidData[0].f480 }),
-                ...(vidData[0].f720 && { "720p": vidData[0].f720 }),
-                ...(vidData[0].f1080 && { "1080p": vidData[0].f1080 }),
-              }).map((format) => (
-                <option key={format} value={format}>
-                  {format}
-                </option>
-              ))}
-            </select>
-
-            <Player
-              ref={playerRef}
-              src={videoSource}
-              poster={"/big_banner.png"}
-              playsInline
-              // autoPlay={playing}
-              onPlay={() => setPlaying(true)}
-              onPause={() => setPlaying(false)}
-              onWaiting={() => setPlaying(false)}
-              onEnded={() => setPlaying(false)}
-              onTimeUpdate={(e) => setPlayed(e.target.currentTime)}
-            >
-              <BigPlayButton position="center" />
-              <LoadingSpinner />
-              <ControlBar autoHide={true} className="my-class md:px-2 lg:px-2">
-                {!isMobile && <ReplayControl seconds={10} order={1.1} />}
-                {!isMobile && <ForwardControl seconds={10} order={1.2} />}
-                {isMobile && <VolumeMenuButton disabled />}
-                <div className="flex items-center">
-                  {!isMobile && (
-                    <button
-                      onClick={() => {
-                        if (document.pictureInPictureElement) {
-                          document.exitPictureInPicture();
-                        } else {
-                          playerRef.current.video.video.requestPictureInPicture();
-                        }
-                      }}
-                      className="icon-control ml-2"
+              <div className="md:hidden lg:hidden">
+                <select
+                  value={quality}
+                  onChange={(e) => handleQualityChange(e.target.value)}
+                  className={`bg-transparent text-white rounded-lg p-[0.5px] lg:ml-2 md:ml-2`}
+                  order={2.1}
+                >
+                  {Object.keys({
+                    ...(vidData.find((data) => data.part === partSource)
+                      .f480 && {
+                      "480p": "f480",
+                    }),
+                    ...(vidData.find((data) => data.part === partSource)
+                      .f720 && {
+                      "720p": "f720",
+                    }),
+                    ...(vidData.find((data) => data.part === partSource)
+                      .f1080 && {
+                      "1080p": "f1080",
+                    }),
+                  }).map((format) => (
+                    <option
+                      key={format}
+                      value={format}
+                      className="bg-[rgba(30,39,78,1)] "
                     >
-                      <MdPictureInPicture className="text-xl" />
-                    </button>
-                  )}
-                  {!isMobile && (
-                    <select
-                      value={quality}
-                      onChange={(e) => handleQualityChange(e.target.value)}
-                      className="bg-transparent text-white rounded-lg p-[0.5px] lg:ml-2 md:ml-2"
-                      order={2.1}
-                    >
-                      {Object.keys({
-                        ...(vidData.f480 && { "480p": vidData.f480 }),
-                        ...(vidData.f720 && { "720p": vidData.f720 }),
-                        ...(vidData.f1080 && { "1080p": vidData.f1080 }),
-                      }).map((format) => (
-                        <option key={format} value={format}>
-                          {format}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
+                      {format}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <Player
+                ref={playerRef}
+                src={videoSource}
+                poster={"/big_banner.png"}
+                playsInline
+                // autoPlay={playing}
+                onPlay={() => setPlaying(true)}
+                onPause={() => setPlaying(false)}
+                onWaiting={() => setPlaying(false)}
+                onEnded={() => setPlaying(false)}
+                onTimeUpdate={(e) => setPlayed(e.target.currentTime)}
+              >
+                <BigPlayButton position="center" />
+                <LoadingSpinner />
+                <ControlBar
+                  autoHide={true}
+                  className="my-class md:px-2 lg:px-2"
+                >
+                  {!isMobile && <ReplayControl seconds={10} order={1.1} />}
+                  {!isMobile && <ForwardControl seconds={10} order={1.2} />}
+                  {isMobile && <VolumeMenuButton disabled />}
+                  <div className="flex items-center">
+                    {!isMobile && (
+                      <>
+                        <button
+                          onClick={() => {
+                            if (document.pictureInPictureElement) {
+                              document.exitPictureInPicture();
+                            } else {
+                              playerRef.current.video.video.requestPictureInPicture();
+                            }
+                          }}
+                          className="icon-control ml-2"
+                        >
+                          <MdPictureInPicture className="text-xl" />
+                        </button>
+                        <select
+                          value={quality}
+                          onChange={(e) => handleQualityChange(e.target.value)}
+                          className="bg-transparent text-white rounded-lg p-[0.5px] lg:ml-2 md:ml-2"
+                          order={2.1}
+                        >
+                          {Object.keys({
+                            ...(vidData.find((data) => data.part === partSource)
+                              .f480 && {
+                              "480p": "f480",
+                            }),
+                            ...(vidData.find((data) => data.part === partSource)
+                              .f720 && {
+                              "720p": "f720",
+                            }),
+                            ...(vidData.find((data) => data.part === partSource)
+                              .f1080 && {
+                              "1080p": "f1080",
+                            }),
+                          }).map((format) => (
+                            <option
+                              key={format}
+                              value={format}
+                              className="bg-[rgba(30,39,78,1)] "
+                            >
+                              {format}
+                            </option>
+                          ))}
+                        </select>
+                      </>
+                    )}
+                    {!isMobile && (
+                      <select
+                        value={quality}
+                        onChange={(e) => handleQualityChange(e.target.value)}
+                        className="bg-transparent text-white rounded-lg p-[0.5px] lg:ml-2 md:ml-2"
+                        order={2.1}
+                      >
+                        {Object.keys({
+                          ...(vidData.f480 && { "480p": vidData.f480 }),
+                          ...(vidData.f720 && { "720p": vidData.f720 }),
+                          ...(vidData.f1080 && { "1080p": vidData.f1080 }),
+                        }).map((format) => (
+                          <option key={format} value={format}>
+                            {format}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
 
-                {!isMobile && (
-                  <PlaybackRateMenuButton
-                    rates={[2, 1.5, 1.25, 1, 0.5]}
-                    order={1.9}
-                  />
-                )}
-              </ControlBar>
-            </Player>
+                  {!isMobile && (
+                    <PlaybackRateMenuButton
+                      rates={[2, 1.5, 1.25, 1, 0.5]}
+                      order={1.9}
+                    />
+                  )}
+                </ControlBar>
+              </Player>
+            </div>
           </div>
         </div>
-      </div>
+      ) : additionalPlayer ? (
+        <div className="w-full flex justify-center mt-4">
+          <iframe
+            src={vidData?.additional_player}
+            frameBorder="0"
+            allowFullScreen
+            width="875px"
+            height="575px"
+            className=""
+            title={movie.title || "No Title"}
+          />
+        </div>
+      ) : (
+        <div className="flex mx-auto">
+          <h3 className="text-center text-2xl">Serial dublyaj jarayonida...</h3>
+        </div>
+      )}
       <div className="mt-8 bg-[rgba(15,21,45,1)] p-2">
         {seasons.map((season, seasonIndex) => (
           <div key={seasonIndex} className="mt-4">

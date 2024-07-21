@@ -76,7 +76,7 @@ const MoviePage = () => {
           console.log(response.data.results[0].type == "cartoon");
           return axios.get(`/cartoon/${movieId}`);
         } else if (response.data.results[0].type == "anime") {
-          console.log(response.data.results[0].type == "cartoon");
+          console.log(response.data.results[0].type == "anime");
           return axios.get(`/anime/${movieId}`);
         }
       })

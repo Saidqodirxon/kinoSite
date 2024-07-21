@@ -178,17 +178,17 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
           <img
             src={movie.photo || "/big_banner.png"}
             alt="Movie Poster"
-            className="w-100 h-auto mb-4 md:mb-0 md:mr-4 "
+            className="w-[100%] md:min-w-[620px] lg:min-w-[620px] max-w-[1200px] h-auto mb-4 md:mb-0 md:mr-4 "
           />
           <div className="relative flex flex-col gap-2 mt-4">
             <HashLink
               to={`/movies/${movie.name}/#videoPlayer`}
-              className="flex justify-center items-center gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
+              className="flex justify-center items-center gap-2 w-[100%] bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
             >
               Tomosha qilish
             </HashLink>
             <button
-              className="flex justify-center items-center gap-2 bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
+              className="flex justify-center items-center gap-2 w-[100%] bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
               onClick={toggleDropdown}
             >
               <CiSaveDown2 />
@@ -298,7 +298,7 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
               <select
                 value={quality}
                 onChange={(e) => handleQualityChange(e.target.value)}
-                className="bg-transparent text-white rounded-lg p-[0.5px] lg:ml-2 md:ml-2"
+                className={`bg-black text-white rounded-lg p-[0.5px] lg:ml-2 md:ml-2`}
                 order={2.1}
               >
                 {Object.keys({
@@ -306,7 +306,11 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                   ...(vidData.f720 && { "720p": vidData.f720 }),
                   ...(vidData.f1080 && { "1080p": vidData.f1080 }),
                 }).map((format) => (
-                  <option key={format} value={format}>
+                  <option
+                    key={format}
+                    value={format}
+                    className="bg-[rgba(30,39,78,1)] "
+                  >
                     {format}
                   </option>
                 ))}
@@ -358,7 +362,11 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                         ...(vidData.f720 && { "720p": vidData.f720 }),
                         ...(vidData.f1080 && { "1080p": vidData.f1080 }),
                       }).map((format) => (
-                        <option key={format} value={format}>
+                        <option
+                          key={format}
+                          value={format}
+                          className="bg-[rgba(30,39,78,1)] "
+                        >
                           {format}
                         </option>
                       ))}
