@@ -30,6 +30,7 @@ import {
 } from "video-react";
 import "video-react/dist/video-react.css"; // import css
 import { format, parseISO } from "date-fns";
+import { saveAs } from "file-saver";
 
 const MovieDetails = ({ movie, vidData, darkMode }) => {
   const [playing, setPlaying] = useState(false);
@@ -159,6 +160,10 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
       });
   };
 
+  const downloadFile = (url, fileName) => {
+    saveAs(url, fileName);
+  };
+
   return (
     <>
       <div className="flex justify-between mt-32 px-[2%]">
@@ -199,33 +204,41 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                 <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                   <div className="py-1">
                     {vidData.f480 && (
-                      <a
-                        href={vidData.f480}
-                        download={`${vidData.name}_480p.mp4`}
-                        target="_blank"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      <button
+                        onClick={() =>
+                          downloadFile(vidData.f480`${vidData.name}_480p.mp4`)
+                        }
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         480p
-                      </a>
+                      </button>
                     )}
                     {vidData.f720 && (
-                      <a
-                        href={vidData.f720}
-                        download={`${vidData.name}_720p.mp4`}
-                        target="_blank"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      <button
+                        onClick={() =>
+                          downloadFile(vidData.f720`${vidData.name}_720p.mp4`)
+                        }
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
-                        720p
-                      </a>
+                        480p
+                      </button>
                     )}
                     {vidData.f1080 && (
-                      <a
-                        href={vidData.f1080}
-                        download={`${vidData.name}_1080p.mp4`}
-                        target="_blank"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      <button
+                        onClick={() =>
+                          downloadFile(vidData.f1080`${vidData.name}_1080p.mp4`)
+                        }
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
-                        1080p
+                        480p
+                      </button>
+                    )}
+                    {vidData.telegram_url && (
+                      <a
+                        href={vidData.telegram_url}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Telegramdan yuklash
                       </a>
                     )}
                   </div>

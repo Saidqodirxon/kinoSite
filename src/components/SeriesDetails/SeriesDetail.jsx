@@ -253,6 +253,14 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
                       1080p
                     </button>
                   )}
+                  {selectedPart.telegram_url && (
+                    <a
+                      href={selectedPart.telegram_url}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Telegramdan yuklash
+                    </a>
+                  )}
                 </div>
               </div>
             )}

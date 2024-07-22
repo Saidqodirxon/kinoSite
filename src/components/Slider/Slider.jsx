@@ -10,8 +10,8 @@ import { Link } from "react-router-dom";
 const delay = 5000;
 
 function truncateText(text, wordLimit) {
-  const words = text.split(" ");
-  if (words.length > wordLimit) {
+  const words = text?.split(" ");
+  if (words?.length > wordLimit) {
     return words.slice(0, wordLimit).join(" ") + "...";
   }
   return text;
@@ -156,7 +156,7 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
           className="slideshowDots"
           style={{
             position: "absolute",
-            bottom: "2rem",
+            bottom: "0.5rem",
             margin: "0",
             // left: "22%",
           }}
@@ -172,7 +172,7 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
           ))}
         </div>
 
-        <div className="slide-title md:hidden absolute top-4 left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold">
+        <div className="slide-title lg:hidden md:hidden absolute top-4 left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold">
           <Link
             to={`/movies/${slides[index]?.title}`}
             className="playBtn flex justify-center items-center rounded-full animate-pulse bg-red-700 text-white w-[6rem] h-[6rem]"
@@ -182,7 +182,7 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
           <div className="flex slide-mobile">
             {" "}
             {/* <span className="years-text">{slides[index]?.age}+</span> */}
-            <span className="rating">
+            <span className="rating text-xl">
               <FaStar className="star-icon" />
               {slides[index]?.like} <FaCircle className="dot-icon" />
               {slides[index]?.year} <FaCircle className="dot-icon" />
@@ -201,7 +201,7 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
                 : ""}
             </span>
           </div>
-          <h2>{slides[index]?.title}</h2>
+          <h1 className="text-2xl">{truncateText(slides[index]?.title, 3)}</h1>
         </div>
       </div>
     </div>
