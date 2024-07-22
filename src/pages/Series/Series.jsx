@@ -11,6 +11,7 @@ import NotFound from "../NotFound/NotFound";
 import { Helmet } from "react-helmet";
 import SeriesDetails from "../../components/SeriesDetails/SeriesDetail";
 import AdsBanner from "../../components/Ads";
+import Error502 from "../../components/BadGateaway";
 
 const SeriesPage = () => {
   const { title } = useParams();
@@ -124,7 +125,12 @@ const SeriesPage = () => {
   };
 
   if (loading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  if (error)
+    return (
+      <>
+        <Error502 />
+      </>
+    );
 
   return (
     <>

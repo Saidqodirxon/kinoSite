@@ -11,6 +11,7 @@ import Loading from "../../components/Loading/Loading";
 import NotFound from "../NotFound/NotFound";
 import { Helmet } from "react-helmet";
 import AdsBanner from "../../components/Ads";
+import Error502 from "../../components/BadGateaway";
 
 const MoviePage = () => {
   const { title } = useParams();
@@ -125,7 +126,12 @@ const MoviePage = () => {
   };
 
   if (loading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  if (error)
+    return (
+      <>
+        <Error502 />
+      </>
+    );
 
   return (
     <>

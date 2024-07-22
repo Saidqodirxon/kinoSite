@@ -48,7 +48,7 @@ function App() {
           <Route path="/filter" element={<Filters />} />
           <Route path="/search" element={<Search />} />
 
-          {/* <Route path="/*" element={<NotFound />} /> */}
+          <Route path="/*" element={<NotFound />} />
         </Routes>
       </div>
     </Router>
