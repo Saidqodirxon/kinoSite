@@ -8,7 +8,7 @@ import Navbar from "./components/Navbar/Navbar";
 import SeriesPage from "./pages/Series/Series";
 import Filters from "./pages/Filters/Filters";
 import Search from "./pages/Search/Search";
-import VideoPlayer from "./pages/Player";
+
 import NotFound from "./pages/NotFound/NotFound";
 
 function App() {
@@ -47,7 +47,7 @@ function App() {
           <Route path="/series/:id" element={<SeriesPage />} />
           <Route path="/filter" element={<Filters />} />
           <Route path="/search" element={<Search />} />
-          <Route path="/player" element={<VideoPlayer />} />
+
           {/* <Route path="/*" element={<NotFound />} /> */}
         </Routes>
       </div>
