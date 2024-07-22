@@ -10,6 +10,7 @@ import MovieDetails from "../../components/MovieDetails/MovieDetail";
 import Loading from "../../components/Loading/Loading";
 import NotFound from "../NotFound/NotFound";
 import { Helmet } from "react-helmet";
+import AdsBanner from "../../components/Ads";
 
 const MoviePage = () => {
   const { title } = useParams();
@@ -199,6 +200,7 @@ const MoviePage = () => {
         </div>
       </div>
       <Footer darkMode={darkMode} />
+      <AdsBanner />
     </>
   );
 };

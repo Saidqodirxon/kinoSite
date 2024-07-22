@@ -6,6 +6,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import { FaEye, FaStar } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
+import AdsBanner from "../../components/Ads";
 
 function Filters() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -287,6 +288,7 @@ function Filters() {
         </div>
       </div>
       <Footer darkMode={darkMode} />
+      <AdsBanner />
     </>
   );
 }

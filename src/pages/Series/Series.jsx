@@ -10,6 +10,7 @@ import Loading from "../../components/Loading/Loading";
 import NotFound from "../NotFound/NotFound";
 import { Helmet } from "react-helmet";
 import SeriesDetails from "../../components/SeriesDetails/SeriesDetail";
+import AdsBanner from "../../components/Ads";
 
 const SeriesPage = () => {
   const { title } = useParams();
@@ -198,6 +199,7 @@ const SeriesPage = () => {
         </div>
       </div>
       <Footer darkMode={darkMode} />
+      <AdsBanner />
     </>
   );
 };

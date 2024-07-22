@@ -16,6 +16,7 @@ import Footer from "../../components/Footer/Footer";
 import logoDark from "/logo_dark_mode.png";
 import logoLight from "/logo_light_mode.png";
 import "./index.scss";
+import AdsBanner from "../../components/Ads";
 
 function Search() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -244,6 +245,7 @@ function Search() {
         </div>
       </div>
       <Footer darkMode={darkMode} />
+      <AdsBanner />
     </>
   );
 }

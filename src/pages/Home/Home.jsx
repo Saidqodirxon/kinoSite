@@ -6,6 +6,7 @@ import Series from "../../components/TrendSeries/Series";
 import Cartoons from "../../components/Cartoons/Cartoons";
 import Animes from "../../components/Animes/Animes";
 import Footer from "../../components/Footer/Footer";
+import AdsBanner from "../../components/Ads";
 
 export default function Main() {
   // localStorage'dan darkMode qiymatini olish, agar mavjud bo'lmasa default qiymat false
@@ -31,6 +32,7 @@ export default function Main() {
       <Animes darkMode={darkMode} />
       <Cartoons darkMode={darkMode} />
       <Footer darkMode={darkMode} />
+      <AdsBanner />
     </>
   );
 }

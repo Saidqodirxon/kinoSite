@@ -203,10 +203,10 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
               {dropdownVisible && (
                 <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                   <div className="py-1">
-                    {vidData.f480 && (
+                    {vidData.f1080 && (
                       <button
                         onClick={() =>
-                          downloadFile(vidData.f480`${vidData.name}_480p.mp4`)
+                          downloadFile(vidData.f480, `${vidData.name}_480p.mp4`)
                         }
                         className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
@@ -216,21 +216,29 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                     {vidData.f720 && (
                       <button
                         onClick={() =>
-                          downloadFile(vidData.f720`${vidData.name}_720p.mp4`)
+                          downloadFile(vidData.f720, `${vidData.name}_720p.mp4`)
                         }
                         className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
-                        480p
+                        720p
                       </button>
                     )}
                     {vidData.f1080 && (
                       <button
-                        onClick={() =>
-                          downloadFile(vidData.f1080`${vidData.name}_1080p.mp4`)
+                        onClick={
+                          () =>
+                            downloadFile(
+                              vidData.f1080,
+                              `${vidData.name}_1080p.mp4`
+                            )
+                          // downloadFile(
+                          //   "https://nodejs.org/dist/v20.15.1/node-v20.15.1-x64.msi",
+                          //   `Zur.msi`
+                          // )
                         }
                         className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
-                        480p
+                        1080p
                       </button>
                     )}
                     {vidData.telegram_url && (
