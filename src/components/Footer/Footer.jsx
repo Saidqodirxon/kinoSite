@@ -26,7 +26,7 @@ function Footer({ darkMode }) {
           <a href="/about" className="block hover:underline">
             Biz haqimizda
           </a>
-          <a href="/advertise" className="block hover:underline">
+          <a href="/about" className="block hover:underline">
             Reklama berish
           </a>
           <a href="mailto:noyobtv@gmail.com" className="block hover:underline">

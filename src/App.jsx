@@ -10,6 +10,7 @@ import Filters from "./pages/Filters/Filters";
 import Search from "./pages/Search/Search";
 
 import NotFound from "./pages/NotFound/NotFound";
+import About from "./pages/About";
 
 function App() {
   // React.useEffect(() => {
@@ -47,6 +48,7 @@ function App() {
           <Route path="/series/:id" element={<SeriesPage />} />
           <Route path="/filter" element={<Filters />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/about" element={<About />} />
 
           <Route path="/*" element={<NotFound />} />
         </Routes>
