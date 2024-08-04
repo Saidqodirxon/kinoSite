@@ -11,6 +11,9 @@ import Search from "./pages/Search/Search";
 
 import NotFound from "./pages/NotFound/NotFound";
 import About from "./pages/About";
+import NetlifyTestAd from "./components/Ads/yandex/Netlfiy";
+import FeedAd from "./components/Ads/yandex/Feed";
+import FullscreenAd from "./components/Ads/yandex/Full";
 
 function App() {
   // React.useEffect(() => {
@@ -53,6 +56,11 @@ function App() {
           <Route path="/*" element={<NotFound />} />
         </Routes>
       </div>
+      {/* Yandex Ads start*/}
+      <FullscreenAd blockId="R-A-10936886-1" />
+      <FeedAd blockId="R-A-10936886-2" />
+      <NetlifyTestAd blockId="R-A-10936780-1" />
+      {/* Yandex Ads end */}
     </Router>
   );
 }
