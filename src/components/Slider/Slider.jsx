@@ -2,10 +2,16 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../Navbar/Navbar";
-import { FaStar, FaCircle } from "react-icons/fa";
+import {
+  FaStar,
+  FaCircle,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import "./index.scss";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useSwipeable } from "react-swipeable";
 
 const delay = 5000;
 
@@ -79,11 +85,23 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
     };
   }, [index, slides.length]);
 
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () =>
+      setIndex((prevIndex) =>
+        prevIndex === slides.length - 1 ? 0 : prevIndex + 1
+      ),
+    onSwipedRight: () =>
+      setIndex((prevIndex) =>
+        prevIndex === 0 ? slides.length - 1 : prevIndex - 1
+      ),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true, // enables swiping with mouse cursor
+  });
+
   return (
     <div className={`slider-wrapper ${darkMode ? "dark" : ""}`}>
-      <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />{" "}
-      {/* Navbar component */}
-      <div className="slideshow banner">
+      <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <div className="slideshow banner" {...swipeHandlers}>
         <div
           className="slideshowSlider"
           style={{
@@ -92,73 +110,94 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
           }}
         >
           {slides.map((slide, idx) => (
-            <>
-              <div
-                className="slide"
-                style={{ width: "100%", position: "relative" }}
-                key={idx}
-              >
-                <div className="slide-overlay">
-                  <span className="years-text">{slide.age}+</span>
-                  <span className="rating">
-                    <FaStar className="star-icon" />
-                    {slide.like} <FaCircle className="dot-icon" />
-                    {slide.year} <FaCircle className="dot-icon" />
-                    {slide.type === "anime"
-                      ? "Anime"
-                      : slide.type === "movie"
-                      ? "Kino"
-                      : slide.type === "series"
-                      ? "Serial"
-                      : slide.type === "cartoon"
-                      ? "Multfilm"
-                      : slide.type === "cartoon/series"
-                      ? "Multfilm"
-                      : slide.type === "anime/series"
-                      ? "Anime"
-                      : ""}
-                  </span>
-                  <div className="slide-content">
-                    <h1
-                      className={`font-bold lg:text-5xl sm:text-3xl ${
-                        darkMode ? "text-white" : "text-black"
-                      }`}
-                    >
-                      {slide.title}
-                    </h1>
-                    <p
-                      className={`lg:text-2xl sm:text-xl slide-desc ${
-                        darkMode ? "text-white" : "text-black"
-                      }`}
-                      dangerouslySetInnerHTML={{
-                        __html: splitTextIntoLines(slide.description, 10),
-                      }}
-                    />
+            <div
+              className="slide"
+              style={{ width: "100%", position: "relative" }}
+              key={idx}
+            >
+              <div className="slide-overlay">
+                <span className="years-text">{slide.age}+</span>
+                <span className="rating">
+                  <FaStar className="star-icon" />
+                  {slide.like} <FaCircle className="dot-icon" />
+                  {slide.year} <FaCircle className="dot-icon" />
+                  {slide.type === "anime"
+                    ? "Anime"
+                    : slide.type === "movie"
+                    ? "Kino"
+                    : slide.type === "series"
+                    ? "Serial"
+                    : slide.type === "cartoon"
+                    ? "Multfilm"
+                    : slide.type === "cartoon/series"
+                    ? "Multfilm"
+                    : slide.type === "anime/series"
+                    ? "Anime"
+                    : ""}
+                </span>
+                <div className="slide-content">
+                  <h1
+                    className={`font-bold lg:text-5xl sm:text-3xl ${
+                      darkMode ? "text-white" : "text-black"
+                    }`}
+                  >
+                    {slide.title}
+                  </h1>
+                  <p
+                    className={`lg:text-2xl sm:text-xl slide-desc ${
+                      darkMode ? "text-white" : "text-black"
+                    }`}
+                    dangerouslySetInnerHTML={{
+                      __html: splitTextIntoLines(slide.description, 10),
+                    }}
+                  />
 
-                    <Link
-                      to={`/movies/${slides[index]?.title}`}
-                      className="watch-button"
-                    >
-                      Tomosha qilish
-                    </Link>
-                  </div>
+                  <Link
+                    to={`/movies/${slides[index]?.title}`}
+                    className="watch-button"
+                  >
+                    Tomosha qilish
+                  </Link>
                 </div>
-                <img
-                  className="slide_img object-cover"
-                  src={darkMode ? slide.imageDark : slide.imageLight}
-                  alt={slide.alt}
-                />
               </div>
-            </>
+              <img
+                className="slide_img object-cover"
+                src={darkMode ? slide.imageDark : slide.imageLight}
+                alt={slide.alt}
+              />
+            </div>
           ))}
         </div>
+
+        {/* Controller buttons for md screens */}
+        <div className="hidden md:flex justify-between items-center absolute top-1/2 transform -translate-y-1/2 w-full">
+          <button
+            className="prev-btn p-4 text-white bg-black bg-opacity-50"
+            onClick={() =>
+              setIndex((prevIndex) =>
+                prevIndex === 0 ? slides.length - 1 : prevIndex - 1
+              )
+            }
+          >
+            <FaChevronLeft />
+          </button>
+          <button
+            className="next-btn p-4 text-white bg-black bg-opacity-50"
+            onClick={() =>
+              setIndex((prevIndex) =>
+                prevIndex === slides.length - 1 ? 0 : prevIndex + 1
+              )
+            }
+          >
+            <FaChevronRight />
+          </button>
+        </div>
+
         <div
           className="slideshowDots"
           style={{
             position: "absolute",
             bottom: "0.5rem",
-            margin: "0",
-            // left: "22%",
           }}
         >
           {slides.map((_, idx) => (
@@ -180,8 +219,6 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
             <span className="triangle"></span>
           </Link>
           <div className="flex slide-mobile">
-            {" "}
-            {/* <span className="years-text">{slides[index]?.age}+</span> */}
             <span className="rating text-xl">
               <FaStar className="star-icon" />
               {slides[index]?.like} <FaCircle className="dot-icon" />

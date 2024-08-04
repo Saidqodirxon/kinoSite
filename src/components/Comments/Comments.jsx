@@ -140,14 +140,16 @@ const CommentsSection = ({ comments, movieId, darkMode, fetchComments }) => {
                   </div>
                   <div className="flex-1 overflow-hidden">
                     <div className="flex items-center justify-between">
-                      <p className="font-bold text-black dark:text-white truncate">
-                        {comment.name || ""}
-                      </p>
-                      <p className="text-gray-500 text-sm dark:text-gray-400 truncate">
+                      <p className="font-bold truncate">{comment.name || ""}</p>
+                      <p className="text-sm text-white dark:text-black truncate">
                         {formattedDate || ""}
                       </p>
                     </div>
-                    <p className="text-black dark:text-white break-words">
+                    <p
+                      className={`${
+                        darkMode ? "text-white" : "text-black"
+                      } break-words`}
+                    >
                       {comment.comment || ""}
                     </p>
                   </div>

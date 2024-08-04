@@ -204,17 +204,22 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
             >
               Tomosha qilish
             </HashLink>
-            <button
-              className="flex justify-center items-center w-full bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
-              onClick={toggleDropdown}
-            >
-              <CiSaveDown2 className="mr-2" />
-              <p>Yuklab olish</p>
-            </button>
+            {selectedPart.telegram_url ? (
+              <button
+                className="flex justify-center items-center w-full bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
+                onClick={toggleDropdown}
+              >
+                <CiSaveDown2 className="mr-2" />
+                <p>Yuklab olish</p>
+              </button>
+            ) : (
+              ""
+            )}
+
             {dropdownVisible && (
               <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                 <div className="py-1">
-                  {selectedPart.f480 && (
+                  {/* {selectedPart.f480 && (
                     <button
                       onClick={() =>
                         downloadFile(
@@ -252,11 +257,12 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
                     >
                       1080p
                     </button>
-                  )}
+                  )} */}
                   {selectedPart.telegram_url && (
                     <a
                       href={selectedPart.telegram_url}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      target="_blank"
                     >
                       Telegramdan yuklash
                     </a>

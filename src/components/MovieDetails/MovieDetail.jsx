@@ -192,18 +192,23 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
             >
               Tomosha qilish
             </HashLink>
-            <button
-              className="flex justify-center items-center gap-2 w-[100%] bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
-              onClick={toggleDropdown}
-            >
-              <CiSaveDown2 />
-              <p>Yuklab olish</p>
-            </button>
+            {vidData.telegram_url ? (
+              <button
+                className="flex justify-center items-center gap-2 w-[100%] bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
+                onClick={toggleDropdown}
+              >
+                <CiSaveDown2 />
+                <p>Yuklab olish</p>
+              </button>
+            ) : (
+              ""
+            )}
+
             <div className="relative">
               {dropdownVisible && (
                 <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                   <div className="py-1">
-                    {vidData.f1080 && (
+                    {/* {vidData.f1080 && (
                       <button
                         onClick={() =>
                           downloadFile(vidData.f480, `${vidData.name}_480p.mp4`)
@@ -240,11 +245,12 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
                       >
                         1080p
                       </button>
-                    )}
+                    )} */}
                     {vidData.telegram_url && (
                       <a
                         href={vidData.telegram_url}
                         className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        target="_blank"
                       >
                         Telegramdan yuklash
                       </a>
