@@ -47,7 +47,11 @@ const AdsBanner = () => {
             isVisible ? "translate-y-0" : "translate-y-full"
           }`}
         >
-          <Link to={adsData.url} className="flex justify-center items-center">
+          <Link
+            to={adsData.url}
+            target="_blank"
+            className="flex justify-center items-center"
+          >
             <div>
               <img
                 src={adsData.content}
