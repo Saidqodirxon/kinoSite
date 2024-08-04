@@ -38,12 +38,27 @@
       name="twitter:description"
       content="Noyob.Tv - Eng yangi va eng qiziqarli kinolar. O'zbek tilidagi eng yaxshi filmlarni tomosha qiling."
     />
-    <meta name="twitter:image" content="URL_TO_IMAGE" />
+    <meta name="twitter:image" content="/big_banner.png" />
+
+    <!-- Yandex.RTB -->
+    <script>
+      window.yaContextCb = window.yaContextCb || [];
+    </script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <!-- Flowplayer JavaScript -->
-    <script src="https://releases.flowplayer.com/flowplayer/7.2.7/flowplayer.min.js"></script>
+
+    <!-- Yandex.RTB R-A-10936780-1 -->
+    <script>
+      window.yaContextCb.push(() => {
+        Ya.Context.AdvManager.render({
+          blockId: "R-A-10936780-1",
+          type: "fullscreen",
+          platform: "desktop",
+        });
+      });
+    </script>
   </body>
 </html>
