@@ -26,31 +26,28 @@ function Footer({ darkMode }) {
           <a href="/about" className="block hover:underline">
             Biz haqimizda
           </a>
-          <a href="/about" className="block hover:underline">
+          <a href="https://t.me/noyobRek" className="block hover:underline">
             Reklama berish
-          </a>
-          <a href="mailto:noyobtv@gmail.com" className="block hover:underline">
-            noyobtv@gmail.com
-          </a>
-          <a href="tel:+998999999999" className="block hover:underline">
-            +998999999999
           </a>
         </div>
 
         {/* O'ng tomon ijtimoiy tarmoqlar linklari */}
         <div className="flex space-x-4 mt-4 md:mt-0">
-          <a href="https://facebook.com" className="hover:text-blue-500">
+          {/* <a href="https://facebook.com" className="hover:text-blue-500">
             <FaFacebook size="20" />
-          </a>
-          <a href="https://telegram.org" className="hover:text-blue-400">
+          </a> */}
+          <a href="https://t.me/NoyobKino_Bot" className="hover:text-blue-400">
             <FaTelegram size="20" />
           </a>
-          <a href="https://instagram.com" className="hover:text-pink-500">
+          <a
+            href="https://www.instagram.com/noyob_kinolar"
+            className="hover:text-pink-500"
+          >
             <FaInstagram size="20" />
           </a>
-          <a href="https://tiktok.com" className="hover:text-black">
+          {/* <a href="https://tiktok.com" className="hover:text-black">
             <FaTiktok size="20" />
-          </a>
+          </a> */}
         </div>
       </div>
       {/* Eng pastida copyright */}

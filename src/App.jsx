@@ -13,31 +13,31 @@ import NotFound from "./pages/NotFound/NotFound";
 import About from "./pages/About";
 
 function App() {
-  // React.useEffect(() => {
-  //   const handleKeyDown = (e) => {
-  //     // F12 va Ctrl+Shift+I, Ctrl+Shift+J kabi kombinatsiyalarni bloklash
-  //     if (
-  //       e.key === "F12" ||
-  //       (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J"))
-  //     ) {
-  //       e.preventDefault();
-  //       e.stopPropagation();
-  //     }
-  //   };
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      // F12 va Ctrl+Shift+I, Ctrl+Shift+J kabi kombinatsiyalarni bloklash
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J"))
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
 
-  //   const handleContextMenu = (e) => {
-  //     // O'ng tugmani bosish orqali devtoolsni ochish mumkinligini bloklash
-  //     e.preventDefault();
-  //   };
+    const handleContextMenu = (e) => {
+      // O'ng tugmani bosish orqali devtoolsni ochish mumkinligini bloklash
+      e.preventDefault();
+    };
 
-  //   window.addEventListener("keydown", handleKeyDown);
-  //   window.addEventListener("contextmenu", handleContextMenu);
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("contextmenu", handleContextMenu);
 
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyDown);
-  //     window.removeEventListener("contextmenu", handleContextMenu);
-  //   };
-  // }, []);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("contextmenu", handleContextMenu);
+    };
+  }, []);
 
   return (
     <Router>
