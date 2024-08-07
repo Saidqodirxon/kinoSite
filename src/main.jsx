@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { ToastContainer } from "react-toastify";
 
-axios.defaults.baseURL = "https://v2.botdownloader.uz";
+axios.defaults.baseURL = "https://back.noyob.tv";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
