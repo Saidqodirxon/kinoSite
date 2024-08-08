@@ -155,18 +155,18 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
                   <Link
                     // to={`/movies/${slides[index]?.title}`}
                     to={
-                      slides[index].type === "movie"
-                        ? `/movies/${slides[index].name}`
-                        : slides[index].type === "series"
-                        ? `/series/${slides[index].name}`
-                        : slides[index].type === "anime"
-                        ? `/movies/${slides[index].name}`
-                        : slides[index].type === "anime/series"
-                        ? `/series/${slides[index].name}`
-                        : slides[index].type === "cartoon/series"
-                        ? `/series/${slides[index].name}`
-                        : slides[index].type === "cartoon"
-                        ? `/movies/${slides[index].name}`
+                      slides[index]?.type === "movie"
+                        ? `/movies/${slides[index]?.title}`
+                        : slides[index]?.type === "series"
+                        ? `/series/${slides[index]?.title}`
+                        : slides[index]?.type === "anime"
+                        ? `/movies/${slides[index]?.title}`
+                        : slides[index]?.type === "anime/series"
+                        ? `/series/${slides[index]?.title}`
+                        : slides[index]?.type === "cartoon/series"
+                        ? `/series/${slides[index]?.title}`
+                        : slides[index]?.type === "cartoon"
+                        ? `/movies/${slides[index]?.title}`
                         : `/`
                     }
                     className="watch-button"
@@ -229,18 +229,18 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
         <div className="slide-title lg:hidden md:hidden absolute top-4 left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold">
           <Link
             to={
-              slides.type === "movie"
-                ? `/movies/${slides.name}`
-                : slides.type === "series"
-                ? `/series/${slides.name}`
-                : slides.type === "anime"
-                ? `/movies/${slides.name}`
-                : slides.type === "anime/series"
-                ? `/series/${slides.name}`
-                : slides.type === "cartoon/series"
-                ? `/series/${slides.name}`
-                : slides.type === "cartoon"
-                ? `/movies/${slides.name}`
+              slides[index]?.type === "movie"
+                ? `/movies/${slides[index]?.title}`
+                : slides[index]?.type === "series"
+                ? `/series/${slides[index]?.title}`
+                : slides[index]?.type === "anime"
+                ? `/movies/${slides[index]?.title}`
+                : slides[index]?.type === "anime/series"
+                ? `/series/${slides[index]?.title}`
+                : slides[index]?.type === "cartoon/series"
+                ? `/series/${slides[index]?.title}`
+                : slides[index]?.type === "cartoon"
+                ? `/movies/${slides[index]?.title}`
                 : `/`
             }
             className="playBtn flex justify-center items-center rounded-full animate-pulse bg-red-700 text-white w-[6rem] h-[6rem]"
