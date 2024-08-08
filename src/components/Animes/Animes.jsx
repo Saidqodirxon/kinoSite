@@ -67,7 +67,7 @@ function Animes({ darkMode }) {
                 key={movie.id}
                 to={
                   movie.type === "anime"
-                    ? `/series/${movie.name}`
+                    ? `/movies/${movie.name}`
                     : movie.type === "anime/series"
                     ? `/series/${movie.name}`
                     : `/`
