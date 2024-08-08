@@ -16,13 +16,13 @@ function App() {
   React.useEffect(() => {
     const handleKeyDown = (e) => {
       // F12 va Ctrl+Shift+I, Ctrl+Shift+J kabi kombinatsiyalarni bloklash
-      // if (
-      //   e.key === "F12" ||
-      //   (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J"))
-      // ) {
-      //   e.preventDefault();
-      //   e.stopPropagation();
-      // }
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J"))
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
     };
 
     const handleContextMenu = (e) => {
