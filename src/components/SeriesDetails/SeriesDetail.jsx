@@ -46,6 +46,7 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
   const [videoSource, setVideoSource] = useState(
     vidData[0].f1080 || vidData[0].f720 || vidData[0].f480
   );
+
   const [partSource, setPartSource] = useState(vidData[0].part);
   const [selectedPart, setSelectedPart] = useState(vidData[0]);
   const [additionalPlayer, setAdditionalPlayer] = useState(
@@ -166,13 +167,24 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
   };
 
   const handlePartSelect = (data) => {
-    setVideoSource(data.f1080 || data.f720 || data.f480);
-    setPartSource(data.part);
-    setAdditionalPlayer(data.additional_player || "");
+    if (data.additional_player) {
+      // Set the video source to the first available additional player URL
+      setAdditionalPlayer(data.additional_player || data.additional_player[0]);
+    } else {
+      // Otherwise, use the standard video sources
+      setVideoSource(data.f1080 || data.f720 || data.f480);
+    }
 
+    setPartSource(data.part);
     setPlaying(false);
-    playerRef.current.load();
+
+    if (playerRef.current) {
+      playerRef.current.load();
+    } else {
+      console.log("Additional Player");
+    }
   };
+
   const downloadFile = (url, fileName) => {
     saveAs(url, fileName);
   };
@@ -465,7 +477,7 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
       ) : additionalPlayer ? (
         <div className="w-full flex justify-center mt-4">
           <iframe
-            src={vidData?.additional_player}
+            src={additionalPlayer || vidData[0].additional_player}
             frameBorder="0"
             allowFullScreen
             width="875px"

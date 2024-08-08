@@ -53,7 +53,7 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
           imageDark: item.photo,
           imageLight: item.photo,
           alt: item.name,
-          title: truncateText(item.name, 4),
+          title: item.name,
           description: truncateText(item.info, 25),
           age: item.age,
           like: item.like,
@@ -141,7 +141,7 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
                       darkMode ? "text-white" : "text-black"
                     }`}
                   >
-                    {slide.title}
+                    {truncateText(slide.title, 4)}
                   </h1>
                   <p
                     className={`lg:text-2xl sm:text-xl slide-desc ${

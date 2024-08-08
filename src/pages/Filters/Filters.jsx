@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -26,6 +25,7 @@ function Filters() {
   const [countries, setCountries] = useState([]);
   const [years, setYears] = useState([]);
   const [filterData, setFilterData] = useState([]);
+  const [error, setError] = useState(""); // State for handling errors
   const [selectedGenre, setSelectedGenre] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
@@ -75,16 +75,27 @@ function Filters() {
   ) => {
     // Filter parameters object
     const params = {
-      //   format: "json",
       ...(genre && { genre }),
       ...(state && { state }),
       ...(year && { year }),
       ...(type && { type }),
     };
 
-    axios.get("/filter/movies", { params }).then((response) => {
-      setFilterData(response.data.results);
-    });
+    axios
+      .get("/filter/movies", { params })
+      .then((response) => {
+        if (response.data.results.length === 0) {
+          setFilterData([]);
+          setError("No movies found.");
+        } else {
+          setFilterData(response.data.results);
+          setError(""); // Clear any previous error
+        }
+      })
+      .catch(() => {
+        setFilterData([]);
+        setError("An error occurred while fetching movies.");
+      });
 
     const queryParams = new URLSearchParams(params);
 
@@ -108,22 +119,41 @@ function Filters() {
               darkMode ? "text-white" : "text-black"
             }`}
           >
-            {selectedType === "anime"
-              ? "Anime "
-              : selectedType === "movie"
-              ? "Kino "
-              : selectedType === "series"
-              ? "Serial"
-              : selectedType === "cartoon"
-              ? "Multfilm "
-              : selectedType === "cartoon/series"
-              ? "Multfilm "
-              : selectedType === "anime/series"
-              ? "Anime "
-              : ""}
-            {selectedGenre} {selectedCountry} {selectedYear}
+            {selectedType && (
+              <>
+                {selectedType === "anime"
+                  ? "Anime "
+                  : selectedType === "movie"
+                  ? "Kino "
+                  : selectedType === "series"
+                  ? "Serial"
+                  : selectedType === "cartoon"
+                  ? "Multfilm "
+                  : selectedType === "cartoon/series"
+                  ? "Multfilm "
+                  : selectedType === "anime/series"
+                  ? "Anime "
+                  : ""}
+                {selectedGenre || selectedCountry || selectedYear ? ", " : ""}
+              </>
+            )}
+            {selectedGenre && (
+              <>
+                {selectedGenre}
+                {(selectedCountry || selectedYear) && ", "}
+              </>
+            )}
+            {selectedCountry && (
+              <>
+                {selectedCountry}
+                {selectedYear && ", "}
+              </>
+            )}
+            {selectedYear}
           </h2>
+
           <div className="md:flex md:justify-between lg:flex lg:justify-between">
+            {/* Filters */}
             <div className="mb-4 relative">
               <select
                 value={selectedType}
@@ -132,7 +162,7 @@ function Filters() {
                   darkMode ? "bg-black text-white" : "text-black bg-white"
                 }`}
               >
-                <option value="" disabled>
+                <option value="" selected>
                   Film turini tanlang
                 </option>
                 <option value="anime">Anime</option>
@@ -158,7 +188,7 @@ function Filters() {
                   darkMode ? "bg-black text-white" : "text-black bg-white"
                 }`}
               >
-                <option value="" disabled>
+                <option value="" selected>
                   Janr tanlang
                 </option>
                 {genres.map((genre, index) => (
@@ -183,7 +213,7 @@ function Filters() {
                   darkMode ? "bg-black text-white" : "text-black bg-white"
                 }`}
               >
-                <option value="" disabled>
+                <option value="" selected>
                   Mamlakatni tanlang
                 </option>
                 {countries.map((country, index) => (
@@ -208,7 +238,10 @@ function Filters() {
                   darkMode ? "bg-black text-white" : "text-black bg-white"
                 }`}
               >
-                <option value="">Yilni tanlang</option>
+                <option value="" selected>
+                  Yilni tanlang
+                </option>
+
                 {years.map((year, index) => (
                   <option key={index} value={year}>
                     {year}
@@ -238,6 +271,14 @@ function Filters() {
               Tatbiq etish
             </button>
           </div>
+          {error && (
+            <div className="text-center text-red-500 mt-4">
+              {error === "An error occurred while fetching movies."
+                ? "Bunday sozlamada film topilmadi"
+                : error}
+            </div>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-8">
             {filterData.map((movie) => (
               <Link

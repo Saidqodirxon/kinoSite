@@ -52,13 +52,13 @@ const AdsBanner = () => {
             target="_blank"
             className="flex justify-center items-center"
           >
-            <div>
+            {/* <div>
               <img
                 src={adsData.content}
                 alt="Advertisement"
                 className="md:w-[100vw] md:h-[10rem] sm:w-100 "
               />
-            </div>
+            </div> */}
 
             <button
               onClick={handleClose}
