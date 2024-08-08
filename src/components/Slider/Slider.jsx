@@ -153,7 +153,22 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
                   />
 
                   <Link
-                    to={`/movies/${slides[index]?.title}`}
+                    // to={`/movies/${slides[index]?.title}`}
+                    to={
+                      slides[index].type === "movie"
+                        ? `/movies/${slides[index].name}`
+                        : slides[index].type === "series"
+                        ? `/series/${slides[index].name}`
+                        : slides[index].type === "anime"
+                        ? `/movies/${slides[index].name}`
+                        : slides[index].type === "anime/series"
+                        ? `/series/${slides[index].name}`
+                        : slides[index].type === "cartoon/series"
+                        ? `/series/${slides[index].name}`
+                        : slides[index].type === "cartoon"
+                        ? `/movies/${slides[index].name}`
+                        : `/`
+                    }
                     className="watch-button"
                   >
                     Tomosha qilish
@@ -213,7 +228,21 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
 
         <div className="slide-title lg:hidden md:hidden absolute top-4 left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold">
           <Link
-            to={`/movies/${slides[index]?.title}`}
+            to={
+              slides[index].type === "movie"
+                ? `/movies/${slides[index].name}`
+                : slides[index].type === "series"
+                ? `/series/${slides[index].name}`
+                : slides[index].type === "anime"
+                ? `/movies/${slides[index].name}`
+                : slides[index].type === "anime/series"
+                ? `/series/${slides[index].name}`
+                : slides[index].type === "cartoon/series"
+                ? `/series/${slides[index].name}`
+                : slides[index].type === "cartoon"
+                ? `/movies/${slides[index].name}`
+                : `/`
+            }
             className="playBtn flex justify-center items-center rounded-full animate-pulse bg-red-700 text-white w-[6rem] h-[6rem]"
           >
             <span className="triangle"></span>
