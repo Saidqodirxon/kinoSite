@@ -48,6 +48,8 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
   );
 
   const [partSource, setPartSource] = useState(vidData[0].part);
+  const [downloadLink, setDownloadLink] = useState(vidData[0].telegram_url);
+
   const [selectedPart, setSelectedPart] = useState(vidData[0]);
   const [additionalPlayer, setAdditionalPlayer] = useState(
     vidData[0].additional_player
@@ -176,6 +178,7 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
     }
 
     setPartSource(data.part);
+    setDownloadLink(data.telegram_url);
     setPlaying(false);
 
     if (playerRef.current) {
@@ -209,6 +212,7 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
             // width={5500}
             className="w-[100%] md:min-w-[620px] lg:min-w-[620px] max-w-[1200px] h-auto mb-4 md:mb-0 md:mr-4"
           />
+
           <div className="relative flex flex-col gap-2 mt-4">
             <HashLink
               to={`/series/${movie.name}#videoPlayer`}
@@ -216,17 +220,6 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
             >
               Tomosha qilish
             </HashLink>
-            {selectedPart.telegram_url ? (
-              <button
-                className="flex justify-center items-center w-full bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
-                onClick={toggleDropdown}
-              >
-                <CiSaveDown2 className="mr-2" />
-                <p>Yuklab olish</p>
-              </button>
-            ) : (
-              ""
-            )}
 
             {dropdownVisible && (
               <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
@@ -270,6 +263,7 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
                       1080p
                     </button>
                   )} */}
+
                   {selectedPart.telegram_url && (
                     <a
                       href={selectedPart.telegram_url}
@@ -480,9 +474,9 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
             src={additionalPlayer || vidData[0].additional_player}
             frameBorder="0"
             allowFullScreen
-            width="875px"
-            height="575px"
-            className=""
+            // width="875px"
+            // height="575px"
+            className="md:w-[875px] md:h-[575px] sm:w-100 h-auto"
             title={movie.title || "No Title"}
           />
         </div>
@@ -491,15 +485,48 @@ const SeriesDetails = ({ movie, vidData, darkMode }) => {
           <h3 className="text-center text-2xl">Serial dublyaj jarayonida...</h3>
         </div>
       )}
-      <div className="mt-8 bg-[rgba(15,21,45,1)] p-2">
+      <div
+        className={`mt-8 bg-[rgba(15,21,45,1)] p-2 rounded-lg text-white
+      }`}
+      >
         {seasons.map((season, seasonIndex) => (
           <div key={seasonIndex} className="mt-4">
-            <h2 className="p-3">
-              {truncateText(movieName, 4)} {partSource}-qism
-            </h2>
+            <div className="relative md:flex md:justify-between m-2">
+              <h2 className="p-3">
+                {truncateText(movieName, 4)} {partSource}-qism
+              </h2>{" "}
+              {selectedPart?.telegram_url ? (
+                <Link
+                  to={downloadLink}
+                  className="flex justify-center items-center  bg-[rgba(30,39,78,1)] border-2 rounded-3xl px-6 py-2 text-white hover:text-gray-300 text-sm md:text-base"
+                  onClick={toggleDropdown}
+                >
+                  <CiSaveDown2 className="mr-2" />
+                  <p>Yuklab olish</p>
+                </Link>
+              ) : (
+                ""
+              )}
+              {/* {dropdownVisible ? (
+                <div className="absolute right-0 mt-10 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                  {selectedPart.telegram_url && (
+                    <a
+                      href={selectedPart.telegram_url}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      target="_blank"
+                    >
+                      Telegramdan yuklash
+                    </a>
+                  )}
+                </div>
+              ) : (
+                ""
+              )} */}
+            </div>
+
             <div
               onClick={() => handleToggle(seasonIndex)}
-              className="flex justify-between items-center cursor-pointer bg-gray-700 p-4 rounded-lg text-white hover:bg-gray-600"
+              className={`flex justify-between items-center cursor-pointer p-4`}
             >
               <h2 className="text-xl font-semibold">{`${season}-fasl`}</h2>
               <span

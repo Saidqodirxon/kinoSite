@@ -139,7 +139,7 @@ const MoviePage = () => {
       <Helmet>
         <title>
           {movieData.name} | Noyob.Tv - Ajoyib Tarjima film, Anime, Multfilm va
-          Seriyallar
+          Seriallar
         </title>
         <meta
           name="description"
@@ -155,7 +155,7 @@ const MoviePage = () => {
         />
         <meta
           property="og:title"
-          content={`${movieData.name} - Ajoyib Film va Seriyalar`}
+          content={`${movieData.name} - Ajoyib Film va Seriallar`}
         />
         <meta
           property="og:description"
@@ -167,11 +167,11 @@ const MoviePage = () => {
         />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Ajoyib Film va Seriyalar" />
+        <meta property="og:site_name" content="Ajoyib Film va Seriallar" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content={`${movieData.name} - Ajoyib Film va Seriyalar`}
+          content={`${movieData.name} - Ajoyib Film va Seriallar`}
         />
         <meta
           name="twitter:description"

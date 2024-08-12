@@ -52,8 +52,9 @@ function Search() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const offset = (currentPage - 1) * 10;
         const response = await axios.get(
-          `/search?name=${searchText}&page=${currentPage}&limit=10`
+          `/search?name=${searchText}&offset=${offset}&limit=10`
         );
         if (response.status === 200) {
           const results = response.data.results;
@@ -67,11 +68,7 @@ function Search() {
       }
     };
 
-    if (searchText) {
-      fetchData();
-    } else {
-      fetchData();
-    }
+    fetchData();
   }, [searchText, currentPage]);
 
   const handleInputChange = (e) => {

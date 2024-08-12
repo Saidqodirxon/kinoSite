@@ -154,7 +154,7 @@ const SeriesPage = () => {
         />
         <meta
           property="og:title"
-          content={`${movieData.name} - Ajoyib Film va Seriyalar`}
+          content={`${movieData.name} - Ajoyib Film va Seriallar`}
         />
         <meta
           property="og:description"
@@ -166,11 +166,11 @@ const SeriesPage = () => {
         />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Ajoyib Film va Seriyalar" />
+        <meta property="og:site_name" content="Ajoyib Film va Seriallar" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content={`${movieData.name} - Ajoyib Film va Seriyalar`}
+          content={`${movieData.name} - Ajoyib Film va Seriallar`}
         />
         <meta
           name="twitter:description"

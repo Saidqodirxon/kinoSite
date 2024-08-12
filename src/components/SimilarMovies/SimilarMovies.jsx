@@ -28,7 +28,7 @@ const SimilarMovies = ({ similarMovies, darkMode }) => {
               movie.type === "movie"
                 ? `/movies/${movie.name}`
                 : movie.type === "anime"
-                ? `/series/${movie.name}`
+                ? `/movies/${movie.name}`
                 : movie.type === "anime/series"
                 ? `/series/${movie.name}`
                 : movie.type === "cartoon"

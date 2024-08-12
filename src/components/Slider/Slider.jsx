@@ -137,7 +137,7 @@ const Slider = ({ darkMode, toggleDarkMode }) => {
                 </span>
                 <div className="slide-content">
                   <h1
-                    className={`font-bold lg:text-5xl sm:text-3xl ${
+                    className={`font-bold  ${
                       darkMode ? "text-white" : "text-black"
                     }`}
                   >
