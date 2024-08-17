@@ -348,7 +348,7 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
               playsInline
               poster="/big_banner.png"
               src={vidData?.f1080 || vidData?.f720 || vidData?.f480}
-              autoPlay={playing}
+              autoPlay={!isMobile && playing}
               onPlay={() => setPlaying(true)}
               onPause={() => setPlaying(false)}
               onEnded={() => setPlaying(false)}
@@ -361,7 +361,7 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
               <ControlBar autoHide={true} className="my-class md:px-2 lg:px-2">
                 {!isMobile && <ReplayControl seconds={10} order={1.1} />}
                 {!isMobile && <ForwardControl seconds={10} order={1.2} />}
-                {isMobile && <VolumeMenuButton disabled />}
+                {!isMobile && <VolumeMenuButton disabled />}
                 <div className="flex items-center">
                   {!isMobile && (
                     <button
