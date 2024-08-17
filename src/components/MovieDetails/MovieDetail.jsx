@@ -347,7 +347,7 @@ const MovieDetails = ({ movie, vidData, darkMode }) => {
               ref={playerRef}
               playsInline
               poster="/big_banner.png"
-              src={vidData.f1080 || vidData.f720 || vidData.f480}
+              src={vidData?.f1080 || vidData?.f720 || vidData?.f480}
               autoPlay={playing}
               onPlay={() => setPlaying(true)}
               onPause={() => setPlaying(false)}
